@@ -1,0 +1,18 @@
+language: go
+sudo: false
+go:
+  - 1.11.x
+go_import_path: github.com/dynastymasra/cookbook
+install:
+  - go get -d -u github.com/golang/dep
+  - cd $(go env GOPATH)/src/github.com/golang/dep
+  - DEP_LATEST=$(git describe --abbrev=0 --tags)
+  - git checkout $DEP_LATEST
+  - go install -ldflags="-X main.version=$DEP_LATEST" ./cmd/dep
+  - git checkout master
+script:
+  - go get github.com/mattn/goveralls
+  - go get golang.org/x/tools/cmd/cover
+  - go test -v -cover -coverprofile=telegraph.coverage.out -covermode=set
+  - cat *.coverage.out >> coverage.out
+  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
