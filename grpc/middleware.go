@@ -36,5 +36,5 @@ LogrusHandler Log duration with logrus in gRPC call
 Ref: https://github.com/grpc-ecosystem/go-grpc-middleware
 */
 func LogrusHandler(duration time.Duration) (string, interface{}) {
-	return "duration", duration.Seconds()
+	return "duration", duration
 }
