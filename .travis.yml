@@ -1,0 +1,14 @@
+language: go
+sudo: false
+go:
+  - 1.13.x
+install:
+  - curl https://raw.githubusercontent.com/golang/dep/master/install.sh | sh
+  - git config --global http.https://gopkg.in.followRedirects true
+  - go mod tidy
+script:
+  - go get github.com/mattn/goveralls
+  - go get golang.org/x/tools/cmd/cover
+  - go test -v -cover -coverprofile=telegraph.coverage.out -covermode=set
+  - cat *.coverage.out >> coverage.out
+  - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
