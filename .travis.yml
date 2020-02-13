@@ -9,6 +9,6 @@ install:
 script:
   - go get github.com/mattn/goveralls
   - go get golang.org/x/tools/cmd/cover
-  - go test -v -cover -coverprofile=telegraph.coverage.out -covermode=set
+  - go test -race -v -cover -coverprofile=cookbook.coverage.out
   - cat *.coverage.out >> coverage.out
   - $HOME/gopath/bin/goveralls -coverprofile=coverage.out -service=travis-ci -repotoken $COVERALLS_TOKEN
