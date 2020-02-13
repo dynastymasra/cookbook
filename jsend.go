@@ -2,8 +2,8 @@ package cookbook
 
 import "encoding/json"
 
-// Jsend used jsend format with some modification
-type Jsend struct {
+// JSend used JSend format with some modification
+type JSend struct {
 	Status  string      `json:"status"`
 	Message string      `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
@@ -12,8 +12,7 @@ type Jsend struct {
 
 // Meta data used for JSON response
 type Meta struct {
-	RequestID interface{} `json:"request_id,omitempty"`
-	Links     *Links      `json:"links,omitempty"`
+	Links *Links `json:"links,omitempty"`
 }
 
 // Links for meta data JSON response
@@ -23,10 +22,9 @@ type Links struct {
 }
 
 // NewMeta build new meta struct
-func NewMeta(requestID string, links *Links) *Meta {
+func NewMeta(links *Links) *Meta {
 	return &Meta{
-		RequestID: requestID,
-		Links:     links,
+		Links: links,
 	}
 }
 
@@ -39,22 +37,22 @@ func NewLinks(next, prev string) *Links {
 }
 
 // SuccessResponse used to return response with JSON format success
-func SuccessResponse(meta *Meta) Jsend {
-	return Jsend{Status: "success", Meta: meta}
+func SuccessResponse(meta *Meta) JSend {
+	return JSend{Status: "success", Meta: meta}
 }
 
 // FailResponse is used to return response with JSON format if failure
-func FailResponse(msg string, data interface{}, meta *Meta) Jsend {
-	return Jsend{Status: "failed", Message: msg, Data: data, Meta: meta}
+func FailResponse(msg string, data interface{}, meta *Meta) JSend {
+	return JSend{Status: "failed", Message: msg, Data: data, Meta: meta}
 }
 
 // SuccessDataResponse used to return response JSON format if have data value
-func SuccessDataResponse(data interface{}, meta *Meta) Jsend {
-	return Jsend{Status: "success", Data: data, Meta: meta}
+func SuccessDataResponse(data interface{}, meta *Meta) JSend {
+	return JSend{Status: "success", Data: data, Meta: meta}
 }
 
-// Stringify make Jsend struct to string
-func (j Jsend) Stringify() string {
+// Stringify make JSend struct to string
+func (j JSend) Stringify() string {
 	toJSON, err := json.Marshal(j)
 	if err != nil {
 		return err.Error()

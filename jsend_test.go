@@ -9,21 +9,20 @@ import (
 	"github.com/stretchr/testify/suite"
 )
 
-type JsendSuite struct {
+type JSendSuite struct {
 	suite.Suite
 }
 
-func Test_JsendSuite(t *testing.T) {
-	suite.Run(t, new(JsendSuite))
+func Test_JSendSuite(t *testing.T) {
+	suite.Run(t, new(JSendSuite))
 }
 
-func (j *JsendSuite) Test_SuccessResponse() {
-	resp := cookbook.SuccessResponse(cookbook.NewMeta("request_id", cookbook.NewLinks("next", "prev")))
+func (j *JSendSuite) Test_SuccessResponse() {
+	resp := cookbook.SuccessResponse(cookbook.NewMeta(cookbook.NewLinks("next", "prev")))
 
-	assert.EqualValues(j.T(), cookbook.Jsend{
+	assert.EqualValues(j.T(), cookbook.JSend{
 		Status: "success",
 		Meta: &cookbook.Meta{
-			RequestID: "request_id",
 			Links: &cookbook.Links{
 				Next: "next",
 				Prev: "prev",
@@ -32,30 +31,27 @@ func (j *JsendSuite) Test_SuccessResponse() {
 	}, resp)
 }
 
-func (j *JsendSuite) Test_FailResponse() {
-	resp := cookbook.FailResponse("message", nil, cookbook.NewMeta("request_id", nil))
+func (j *JSendSuite) Test_FailResponse() {
+	resp := cookbook.FailResponse("message", nil, cookbook.NewMeta(nil))
 
-	assert.EqualValues(j.T(), cookbook.Jsend{
+	assert.EqualValues(j.T(), cookbook.JSend{
 		Status:  "failed",
 		Message: "message",
-		Meta: &cookbook.Meta{
-			RequestID: "request_id",
-		},
+		Meta:    &cookbook.Meta{},
 	}, resp)
 }
 
-func (j *JsendSuite) Test_SuccessDataResponse() {
+func (j *JSendSuite) Test_SuccessDataResponse() {
 	resp := cookbook.SuccessDataResponse(map[string]interface{}{
 		"test": "test",
-	}, cookbook.NewMeta("request_id", cookbook.NewLinks("next", "prev")))
+	}, cookbook.NewMeta(cookbook.NewLinks("next", "prev")))
 
-	assert.EqualValues(j.T(), cookbook.Jsend{
+	assert.EqualValues(j.T(), cookbook.JSend{
 		Status: "success",
 		Data: map[string]interface{}{
 			"test": "test",
 		},
 		Meta: &cookbook.Meta{
-			RequestID: "request_id",
 			Links: &cookbook.Links{
 				Next: "next",
 				Prev: "prev",
@@ -64,7 +60,7 @@ func (j *JsendSuite) Test_SuccessDataResponse() {
 	}, resp)
 }
 
-func (j *JsendSuite) Test_Stringify_Success() {
+func (j *JSendSuite) Test_Stringify_Success() {
 	expected := `{"status":"success","data":{"test":"test"}}`
 
 	result := cookbook.SuccessDataResponse(map[string]interface{}{
@@ -74,7 +70,7 @@ func (j *JsendSuite) Test_Stringify_Success() {
 	assert.JSONEq(j.T(), expected, result)
 }
 
-func (j *JsendSuite) Test_Stringify_Failed_Marshal() {
+func (j *JSendSuite) Test_Stringify_Failed_Marshal() {
 	ch := make(chan string)
 	expected := "json: unsupported type: chan string"
 
