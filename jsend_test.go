@@ -18,26 +18,19 @@ func Test_JSendSuite(t *testing.T) {
 }
 
 func (j *JSendSuite) Test_SuccessResponse() {
-	resp := cookbook.SuccessResponse(cookbook.NewMeta(cookbook.NewLinks("next", "prev")))
+	resp := cookbook.SuccessResponse()
 
 	assert.EqualValues(j.T(), cookbook.JSend{
 		Status: "success",
-		Meta: &cookbook.Meta{
-			Links: &cookbook.Links{
-				Next: "next",
-				Prev: "prev",
-			},
-		},
 	}, resp)
 }
 
 func (j *JSendSuite) Test_FailResponse() {
-	resp := cookbook.FailResponse("message", nil, cookbook.NewMeta(nil))
+	resp := cookbook.FailResponse("message", nil)
 
 	assert.EqualValues(j.T(), cookbook.JSend{
 		Status:  "failed",
 		Message: "message",
-		Meta:    &cookbook.Meta{},
 	}, resp)
 }
 

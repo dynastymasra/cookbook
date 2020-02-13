@@ -37,13 +37,13 @@ func NewLinks(next, prev string) *Links {
 }
 
 // SuccessResponse used to return response with JSON format success
-func SuccessResponse(meta *Meta) JSend {
-	return JSend{Status: "success", Meta: meta}
+func SuccessResponse() JSend {
+	return JSend{Status: "success"}
 }
 
 // FailResponse is used to return response with JSON format if failure
-func FailResponse(msg string, data interface{}, meta *Meta) JSend {
-	return JSend{Status: "failed", Message: msg, Data: data, Meta: meta}
+func FailResponse(msg string, data interface{}) JSend {
+	return JSend{Status: "failed", Message: msg, Data: data}
 }
 
 // SuccessDataResponse used to return response JSON format if have data value
