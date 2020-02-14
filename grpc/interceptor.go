@@ -88,6 +88,16 @@ func LogrusUnaryInterceptor(logger *logrus.Entry) grpc.UnaryServerInterceptor {
 		responseTime := time.Now()
 		deltaTime := responseTime.Sub(startTime)
 
+		if err != nil {
+			log.WithFields(logrus.Fields{
+				"response_time": responseTime.Format(time.RFC3339),
+				"delta_time":    deltaTime,
+				"error":         err,
+			}).Warnln("gRPC request")
+
+			return resp, err
+		}
+
 		log.WithFields(logrus.Fields{
 			"response_time": responseTime.Format(time.RFC3339),
 			"delta_time":    deltaTime,
@@ -115,6 +125,16 @@ func LogrusStreamInterceptor(logger *logrus.Entry) grpc.StreamServerInterceptor 
 
 		responseTime := time.Now()
 		deltaTime := responseTime.Sub(startTime)
+
+		if err != nil {
+			log.WithFields(logrus.Fields{
+				"response_time": responseTime.Format(time.RFC3339),
+				"delta_time":    deltaTime,
+				"error":         err,
+			}).Warnln("gRPC request")
+
+			return err
+		}
 
 		log.WithFields(logrus.Fields{
 			"response_time": responseTime.Format(time.RFC3339),
