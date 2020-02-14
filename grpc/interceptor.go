@@ -18,11 +18,11 @@ import (
 )
 
 /**
-AuthUnaryInterceptor Function for check authentication send by client
+AuthInterceptor Function for check authentication send in metadata
 Example: Bearer token
 Ref: https://github.com/grpc-ecosystem/go-grpc-middleware
 */
-func AuthUnaryInterceptor(expectedToken string) grpc_auth.AuthFunc {
+func AuthInterceptor(expectedToken string) grpc_auth.AuthFunc {
 	return func(ctx context.Context) (context.Context, error) {
 		token, err := grpc_auth.AuthFromMD(ctx, cookbook.Bearer)
 		if err != nil {
