@@ -4,6 +4,8 @@ import (
 	"context"
 	"time"
 
+	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
+
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
 
@@ -32,6 +34,24 @@ func AuthUnaryInterceptor(expectedToken string) grpc_auth.AuthFunc {
 		}
 
 		return ctx, nil
+	}
+}
+
+/**
+ValidateMetadataKeyInterceptor Function used to check metadata key included in request
+*/
+func ValidateMetadataKeyInterceptor(keys ...string) grpc.UnaryServerInterceptor {
+	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
+		for _, key := range keys {
+			val := metautils.ExtractIncoming(ctx).Get(key)
+			if val == "" {
+				return nil, status.Errorf(codes.FailedPrecondition, "metadata key not found")
+			}
+		}
+
+		resp, err := handler(ctx, req)
+
+		return resp, err
 	}
 }
 
