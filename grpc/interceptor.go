@@ -69,7 +69,10 @@ func ValidateMetadataKeyStreamInterceptor(keys ...string) grpc.StreamServerInter
 	}
 }
 
+/**
 //LogrusUnaryInterceptor gRPC interceptor to log unary request duration status
+this function will set field request_id from metadata
+*/
 func LogrusUnaryInterceptor(logger *logrus.Entry) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		startTime := time.Now()
@@ -79,6 +82,7 @@ func LogrusUnaryInterceptor(logger *logrus.Entry) grpc.UnaryServerInterceptor {
 		log := logger.WithFields(logrus.Fields{
 			"full_method":  info.FullMethod,
 			"request_time": startTime.Format(time.RFC3339),
+			"request_id":   metautils.ExtractIncoming(ctx).Get(cookbook.RequestID),
 		})
 
 		responseTime := time.Now()
@@ -93,7 +97,10 @@ func LogrusUnaryInterceptor(logger *logrus.Entry) grpc.UnaryServerInterceptor {
 	}
 }
 
-//LogrusStreamInterceptor gRPC interceptor to log stream request duration status
+/**
+LogrusStreamInterceptor gRPC interceptor to log stream request duration status
+this function will set field request_id from metadata
+*/
 func LogrusStreamInterceptor(logger *logrus.Entry) grpc.StreamServerInterceptor {
 	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		startTime := time.Now()
@@ -103,6 +110,7 @@ func LogrusStreamInterceptor(logger *logrus.Entry) grpc.StreamServerInterceptor 
 		log := logger.WithFields(logrus.Fields{
 			"full_method":  info.FullMethod,
 			"request_time": startTime.Format(time.RFC3339),
+			"request_id":   metautils.ExtractIncoming(stream.Context()).Get(cookbook.RequestID),
 		})
 
 		responseTime := time.Now()
