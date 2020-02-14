@@ -43,7 +43,7 @@ func ValidateMetadataKeyUnaryInterceptor(keys ...string) grpc.UnaryServerInterce
 		for _, key := range keys {
 			val := metautils.ExtractIncoming(ctx).Get(key)
 			if val == "" {
-				return nil, status.Errorf(codes.FailedPrecondition, "metadata key not found")
+				return nil, status.Errorf(codes.FailedPrecondition, "metadata key not found", key)
 			}
 		}
 
