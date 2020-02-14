@@ -37,10 +37,8 @@ func AuthUnaryInterceptor(expectedToken string) grpc_auth.AuthFunc {
 	}
 }
 
-/**
-ValidateMetadataKeyInterceptor Function used to check metadata key included in request
-*/
-func ValidateMetadataKeyInterceptor(keys ...string) grpc.UnaryServerInterceptor {
+//ValidateMetadataKeyUnaryInterceptor Function used to check metadata key included in request
+func ValidateMetadataKeyUnaryInterceptor(keys ...string) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		for _, key := range keys {
 			val := metautils.ExtractIncoming(ctx).Get(key)
@@ -55,9 +53,23 @@ func ValidateMetadataKeyInterceptor(keys ...string) grpc.UnaryServerInterceptor 
 	}
 }
 
-/**
-LogrusUnaryInterceptor gRPC interceptor to log unary request duration status
-*/
+//ValidateMetadataKeyStreamInterceptor Function used to check metadata key included in request
+func ValidateMetadataKeyStreamInterceptor(keys ...string) grpc.StreamServerInterceptor {
+	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
+		for _, key := range keys {
+			val := metautils.ExtractIncoming(stream.Context()).Get(key)
+			if val == "" {
+				return status.Errorf(codes.FailedPrecondition, "metadata key not found")
+			}
+		}
+
+		err := handler(srv, stream)
+
+		return err
+	}
+}
+
+//LogrusUnaryInterceptor gRPC interceptor to log unary request duration status
 func LogrusUnaryInterceptor(logger *logrus.Entry) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		startTime := time.Now()
@@ -81,9 +93,7 @@ func LogrusUnaryInterceptor(logger *logrus.Entry) grpc.UnaryServerInterceptor {
 	}
 }
 
-/**
-LogrusStreamInterceptor gRPC interceptor to log stream request duration status
-*/
+//LogrusStreamInterceptor gRPC interceptor to log stream request duration status
 func LogrusStreamInterceptor(logger *logrus.Entry) grpc.StreamServerInterceptor {
 	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		startTime := time.Now()
