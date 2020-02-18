@@ -43,7 +43,7 @@ this function will set field request_id from metadata
 */
 func LogrusUnaryInterceptor(logger *logrus.Entry, keys ...string) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		startTime := time.Now()
+		startTime := time.Now().UTC()
 
 		for _, key := range keys {
 			val := metautils.ExtractIncoming(ctx).Get(key)
@@ -63,7 +63,7 @@ func LogrusUnaryInterceptor(logger *logrus.Entry, keys ...string) grpc.UnaryServ
 
 		resp, err := handler(newCtx, req)
 
-		responseTime := time.Now()
+		responseTime := time.Now().UTC()
 		deltaTime := responseTime.Sub(startTime)
 
 		if err != nil {
@@ -91,9 +91,7 @@ this function will set field request_id from metadata
 */
 func LogrusStreamInterceptor(logger *logrus.Entry, keys ...string) grpc.StreamServerInterceptor {
 	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-		startTime := time.Now()
-
-		err := handler(srv, stream)
+		startTime := time.Now().UTC()
 
 		for _, key := range keys {
 			val := metautils.ExtractIncoming(stream.Context()).Get(key)
@@ -108,7 +106,9 @@ func LogrusStreamInterceptor(logger *logrus.Entry, keys ...string) grpc.StreamSe
 			"request_id":   metautils.ExtractIncoming(stream.Context()).Get(cookbook.RequestID),
 		})
 
-		responseTime := time.Now()
+		err := handler(srv, stream)
+
+		responseTime := time.Now().UTC()
 		deltaTime := responseTime.Sub(startTime)
 
 		if err != nil {
