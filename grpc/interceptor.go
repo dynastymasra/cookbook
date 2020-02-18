@@ -45,8 +45,6 @@ func LogrusUnaryInterceptor(logger *logrus.Entry, keys ...string) grpc.UnaryServ
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		startTime := time.Now()
 
-		resp, err := handler(ctx, req)
-
 		for _, key := range keys {
 			val := metautils.ExtractIncoming(ctx).Get(key)
 			if val == "" {
@@ -54,11 +52,16 @@ func LogrusUnaryInterceptor(logger *logrus.Entry, keys ...string) grpc.UnaryServ
 			}
 		}
 
+		requestID := metautils.ExtractIncoming(ctx).Get(cookbook.RequestID)
+		newCtx := context.WithValue(ctx, cookbook.RequestID, requestID)
+
 		log := logger.WithFields(logrus.Fields{
-			"full_method":  info.FullMethod,
-			"request_time": startTime.Format(time.RFC3339),
-			"request_id":   metautils.ExtractIncoming(ctx).Get(cookbook.RequestID),
+			"full_method":      info.FullMethod,
+			"request_time":     startTime.Format(time.RFC3339),
+			cookbook.RequestID: requestID,
 		})
+
+		resp, err := handler(newCtx, req)
 
 		responseTime := time.Now()
 		deltaTime := responseTime.Sub(startTime)
