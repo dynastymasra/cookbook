@@ -43,7 +43,7 @@ this function will set field request_id from metadata
 */
 func LogrusUnaryInterceptor(logger *logrus.Entry, keys ...string) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
-		startTime := time.Now().UTC()
+		startTime := time.Now()
 
 		for _, key := range keys {
 			val := metautils.ExtractIncoming(ctx).Get(key)
@@ -57,21 +57,20 @@ func LogrusUnaryInterceptor(logger *logrus.Entry, keys ...string) grpc.UnaryServ
 
 		log := logger.WithFields(logrus.Fields{
 			"full_method":      info.FullMethod,
-			"request_time":     startTime.Format(time.RFC3339),
+			"request_time":     startTime.UTC().Format(time.RFC3339),
 			cookbook.RequestID: requestID,
 		})
 
 		resp, err := handler(newCtx, req)
 
-		responseTime := time.Now().UTC()
+		responseTime := time.Now()
 		deltaTime := responseTime.Sub(startTime)
 
 		if err != nil {
 			log.WithFields(logrus.Fields{
-				"response_time": responseTime.Format(time.RFC3339),
+				"response_time": responseTime.UTC().Format(time.RFC3339),
 				"delta_time":    deltaTime,
-				"error":         err,
-			}).Warnln("gRPC request")
+			}).WithError(err).Warnln("gRPC request")
 
 			return resp, err
 		}
@@ -91,7 +90,7 @@ this function will set field request_id from metadata
 */
 func LogrusStreamInterceptor(logger *logrus.Entry, keys ...string) grpc.StreamServerInterceptor {
 	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
-		startTime := time.Now().UTC()
+		startTime := time.Now()
 
 		for _, key := range keys {
 			val := metautils.ExtractIncoming(stream.Context()).Get(key)
@@ -108,21 +107,20 @@ func LogrusStreamInterceptor(logger *logrus.Entry, keys ...string) grpc.StreamSe
 
 		err := handler(srv, stream)
 
-		responseTime := time.Now().UTC()
+		responseTime := time.Now()
 		deltaTime := responseTime.Sub(startTime)
 
 		if err != nil {
 			log.WithFields(logrus.Fields{
-				"response_time": responseTime.Format(time.RFC3339),
+				"response_time": responseTime.UTC().Format(time.RFC3339),
 				"delta_time":    deltaTime,
-				"error":         err,
-			}).Warnln("gRPC request")
+			}).WithError(err).Warnln("gRPC request")
 
 			return err
 		}
 
 		log.WithFields(logrus.Fields{
-			"response_time": responseTime.Format(time.RFC3339),
+			"response_time": responseTime.UTC().Format(time.RFC3339),
 			"delta_time":    deltaTime,
 		}).Infoln("gRPC request")
 
