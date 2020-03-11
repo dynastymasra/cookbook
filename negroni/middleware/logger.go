@@ -11,11 +11,11 @@ import (
 
 func LogrusLog(name string) negroni.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-		startTime := time.Now()
+		startTime := time.Now().UTC()
 
 		next(w, r)
 
-		responseTime := time.Now()
+		responseTime := time.Now().UTC()
 		deltaTime := responseTime.Sub(startTime)
 
 		logrus.WithFields(logrus.Fields{
@@ -27,6 +27,6 @@ func LogrusLog(name string) negroni.HandlerFunc {
 			"method":         r.Method,
 			"request_source": r.Header.Get("X-FORWARDED-FOR"),
 			"headers":        r.Header,
-		}).Infoln("HTTP Request ", name)
+		}).Infoln("HTTP Request", name)
 	}
 }
