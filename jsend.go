@@ -8,6 +8,7 @@ type JSend struct {
 	Message string      `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
 	Meta    *Meta       `json:"meta,omitempty"`
+	Code    string      `json:"code,omitempty"`
 }
 
 // Meta data used for JSON response
@@ -41,9 +42,14 @@ func SuccessResponse() JSend {
 	return JSend{Status: "success"}
 }
 
-// FailResponse is used to return response with JSON format if failure
-func FailResponse(msg string, data interface{}) JSend {
-	return JSend{Status: "failed", Message: msg, Data: data}
+// FailResponse is used to return response with JSON format if failure from client side
+func FailResponse(data interface{}, code string) JSend {
+	return JSend{Status: "failed", Data: data, Code: code}
+}
+
+// ErrorResponse is used return response with JSON format if failure in server side
+func ErrorResponse(msg string, code string) JSend {
+	return JSend{Status: "error", Message: msg, Code: code}
 }
 
 // SuccessDataResponse used to return response JSON format if have data value

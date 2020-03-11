@@ -26,11 +26,22 @@ func (j *JSendSuite) Test_SuccessResponse() {
 }
 
 func (j *JSendSuite) Test_FailResponse() {
-	resp := cookbook.FailResponse("message", nil)
+	resp := cookbook.FailResponse("data", "1234567890")
 
 	assert.EqualValues(j.T(), cookbook.JSend{
-		Status:  "failed",
+		Status: "failed",
+		Data:   "data",
+		Code:   "1234567890",
+	}, resp)
+}
+
+func (j *JSendSuite) Test_ErrorResponse() {
+	resp := cookbook.ErrorResponse("message", "1234567890")
+
+	assert.EqualValues(j.T(), cookbook.JSend{
+		Status:  "error",
 		Message: "message",
+		Code:    "1234567890",
 	}, resp)
 }
 
