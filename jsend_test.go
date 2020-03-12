@@ -26,13 +26,13 @@ func (j *JSendSuite) Test_SuccessResponse() {
 }
 
 func (j *JSendSuite) Test_FailResponse() {
-	resp := cookbook.FailResponse(cookbook.JSON{
+	resp := cookbook.FailResponse(&cookbook.JSON{
 		"key": "value",
 	}, "1234567890")
 
 	assert.EqualValues(j.T(), cookbook.JSend{
 		Status: "failed",
-		Data: cookbook.JSON{
+		Data: &cookbook.JSON{
 			"key": "value",
 		},
 		Code: "1234567890",
@@ -50,13 +50,13 @@ func (j *JSendSuite) Test_ErrorResponse() {
 }
 
 func (j *JSendSuite) Test_SuccessDataResponse() {
-	resp := cookbook.SuccessDataResponse(map[string]interface{}{
+	resp := cookbook.SuccessDataResponse(&cookbook.JSON{
 		"test": "test",
 	}, cookbook.NewMeta(cookbook.NewLinks("next", "prev")))
 
 	assert.EqualValues(j.T(), cookbook.JSend{
 		Status: "success",
-		Data: map[string]interface{}{
+		Data: &cookbook.JSON{
 			"test": "test",
 		},
 		Meta: &cookbook.Meta{
@@ -71,7 +71,7 @@ func (j *JSendSuite) Test_SuccessDataResponse() {
 func (j *JSendSuite) Test_Stringify_Success() {
 	expected := `{"status":"success","data":{"test":"test"}}`
 
-	result := cookbook.SuccessDataResponse(map[string]interface{}{
+	result := cookbook.SuccessDataResponse(&cookbook.JSON{
 		"test": "test",
 	}, nil).Stringify()
 
@@ -82,7 +82,7 @@ func (j *JSendSuite) Test_Stringify_Failed_Marshal() {
 	ch := make(chan string)
 	expected := "json: unsupported type: chan string"
 
-	result := cookbook.SuccessDataResponse(cookbook.JSON{
+	result := cookbook.SuccessDataResponse(&cookbook.JSON{
 		"key": ch,
 	}, nil).Stringify()
 

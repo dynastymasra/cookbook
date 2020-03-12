@@ -6,7 +6,7 @@ import "encoding/json"
 type JSend struct {
 	Status  string `json:"status"`
 	Message string `json:"message,omitempty"`
-	Data    JSON   `json:"data,omitempty"`
+	Data    *JSON  `json:"data,omitempty"`
 	Meta    *Meta  `json:"meta,omitempty"`
 	Code    string `json:"code,omitempty"`
 }
@@ -43,7 +43,7 @@ func SuccessResponse() JSend {
 }
 
 // FailResponse is used to return response with JSON format if failure from client side
-func FailResponse(data JSON, code string) JSend {
+func FailResponse(data *JSON, code string) JSend {
 	return JSend{Status: "failed", Data: data, Code: code}
 }
 
@@ -53,7 +53,7 @@ func ErrorResponse(msg string, code string) JSend {
 }
 
 // SuccessDataResponse used to return response JSON format if have data value
-func SuccessDataResponse(data JSON, meta *Meta) JSend {
+func SuccessDataResponse(data *JSON, meta *Meta) JSend {
 	return JSend{Status: "success", Data: data, Meta: meta}
 }
 
