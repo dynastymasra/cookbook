@@ -1,9 +1,11 @@
 package middleware
 
 import (
-	"fmt"
+	"context"
 	"net/http"
 	"time"
+
+	uuid "github.com/satori/go.uuid"
 
 	"github.com/dynastymasra/cookbook"
 
@@ -16,9 +18,12 @@ import (
 func LogrusLog(name string) negroni.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		startTime := time.Now().UTC()
-		requestID := fmt.Sprint(r.Context().Value(RequestID))
 
-		next(w, r)
+		requestID := r.Header.Get(cookbook.XRequestID)
+		if len(requestID) < 1 {
+			requestID = uuid.NewV4().String()
+		}
+		next(w, r.WithContext(context.WithValue(r.Context(), cookbook.RequestID, requestID)))
 
 		responseTime := time.Now().UTC()
 		deltaTime := responseTime.Sub(startTime)
