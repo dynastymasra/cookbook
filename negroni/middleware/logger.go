@@ -1,6 +1,7 @@
 package middleware
 
 import (
+	"fmt"
 	"net/http"
 	"time"
 
@@ -11,10 +12,11 @@ import (
 	"github.com/urfave/negroni"
 )
 
+// LogrusLog middleware function for log HTTP request. combine with RequestID middleware first to add request id in log
 func LogrusLog(name string) negroni.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		startTime := time.Now().UTC()
-		requestID := r.Header.Get(cookbook.XRequestID)
+		requestID := fmt.Sprint(r.Context().Value(RequestID))
 
 		next(w, r)
 
