@@ -60,3 +60,34 @@ func (p *ParseSuite) Test_Stringify_Failed_Marshal() {
 
 	assert.NotEmpty(p.T(), result)
 }
+
+func (p *ParseSuite) Test_ParseStringNil() {
+	s := "test"
+
+	result := cookbook.ParseStringNil(s)
+
+	assert.NotNil(p.T(), result)
+}
+
+func (p *ParseSuite) Test_ParseStringNil_Empty() {
+	s := ""
+
+	result := cookbook.ParseStringNil(s)
+
+	assert.Nil(p.T(), result)
+}
+
+func (p *ParseSuite) Test_ParsePtrString() {
+	s := "test"
+
+	result := cookbook.ParsePtrString(&s)
+
+	assert.NotEmpty(p.T(), result)
+	assert.Equal(p.T(), s, result)
+}
+
+func (p *ParseSuite) Test_ParsePtrString_Nil() {
+	result := cookbook.ParsePtrString(nil)
+
+	assert.Empty(p.T(), result)
+}

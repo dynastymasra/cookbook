@@ -32,3 +32,19 @@ func Stringify(str interface{}) string {
 	}
 	return string(out)
 }
+
+// ParseStringNil function to check string if empty return nil
+func ParseStringNil(s string) *string {
+	if len(s) > 0 {
+		return &s
+	}
+	return nil
+}
+
+// ParsePtrString function check pointer string, if nil return empty string
+func ParsePtrString(s *string) string {
+	if s == nil {
+		return ""
+	}
+	return *s
+}
