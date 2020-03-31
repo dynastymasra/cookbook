@@ -6,6 +6,7 @@ require (
 	github.com/gorilla/mux v1.7.4
 	github.com/grpc-ecosystem/go-grpc-middleware v1.0.0
 	github.com/newrelic/go-agent v3.3.0+incompatible
+	github.com/nyaruka/phonenumbers v1.0.54
 	github.com/satori/go.uuid v1.2.0
 	github.com/sirupsen/logrus v1.2.0
 	github.com/spf13/viper v1.6.2

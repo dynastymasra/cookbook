@@ -3,6 +3,8 @@ package cookbook_test
 import (
 	"testing"
 
+	"github.com/nyaruka/phonenumbers"
+
 	"github.com/dynastymasra/cookbook"
 
 	"github.com/stretchr/testify/assert"
@@ -90,4 +92,36 @@ func (p *ParseSuite) Test_ParsePtrString_Nil() {
 	result := cookbook.ParsePtrString(nil)
 
 	assert.Empty(p.T(), result)
+}
+
+func (p *ParseSuite) Test_ParseStringToPhone_Success() {
+	res1, err1 := cookbook.ParseStringToPhone("+64 3 345 6789", "", phonenumbers.E164)
+	res2, err2 := cookbook.ParseStringToPhone("+64 21 345 687", "", phonenumbers.E164)
+	res3, err3 := cookbook.ParseStringToPhone("+64 021 345 687", "", phonenumbers.E164)
+	res4, err4 := cookbook.ParseStringToPhone("+64 021-345-687", "", phonenumbers.E164)
+
+	assert.Equal(p.T(), "+6433456789", res1)
+	assert.Equal(p.T(), "+6421345687", res2)
+	assert.Equal(p.T(), "+6421345687", res3)
+	assert.Equal(p.T(), "+6421345687", res4)
+	assert.NoError(p.T(), err1)
+	assert.NoError(p.T(), err2)
+	assert.NoError(p.T(), err3)
+	assert.NoError(p.T(), err4)
+}
+
+func (p *ParseSuite) Test_ParseStringToPhone_Failed() {
+	res1, err1 := cookbook.ParseStringToPhone("03 345 6789", "", phonenumbers.E164)
+	res2, err2 := cookbook.ParseStringToPhone("021 345 678", "", phonenumbers.E164)
+	res3, err3 := cookbook.ParseStringToPhone("64 03 345 6789", "", phonenumbers.E164)
+	res4, err4 := cookbook.ParseStringToPhone("64 21 345 678", "", phonenumbers.E164)
+
+	assert.Equal(p.T(), "", res1)
+	assert.Equal(p.T(), "", res2)
+	assert.Equal(p.T(), "", res3)
+	assert.Equal(p.T(), "", res4)
+	assert.Error(p.T(), err1)
+	assert.Error(p.T(), err2)
+	assert.Error(p.T(), err3)
+	assert.Error(p.T(), err4)
 }

@@ -3,6 +3,8 @@ package cookbook
 import (
 	"encoding/json"
 	"strconv"
+
+	"github.com/nyaruka/phonenumbers"
 )
 
 // ParseStringToInt Parse string to int, error return default value
@@ -47,4 +49,18 @@ func ParsePtrString(s *string) string {
 		return ""
 	}
 	return *s
+}
+
+// ParseStringToPhone Function to parse string to formatted phone number
+// See details documentation in https://github.com/nyaruka/phonenumbers
+// defaultRegionCode using ISO 3166-Alpha 2
+func ParseStringToPhone(phone, defaultRegionCode string, phoneFormat phonenumbers.PhoneNumberFormat) (string, error) {
+	num, err := phonenumbers.Parse(phone, defaultRegionCode)
+	if err != nil {
+		return "", err
+	}
+
+	formattedNum := phonenumbers.Format(num, phoneFormat)
+
+	return formattedNum, nil
 }
