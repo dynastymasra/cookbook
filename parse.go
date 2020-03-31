@@ -2,6 +2,7 @@ package cookbook
 
 import (
 	"encoding/json"
+	"fmt"
 	"strconv"
 
 	"github.com/nyaruka/phonenumbers"
@@ -58,6 +59,10 @@ func ParseStringToPhone(phone, defaultRegionCode string, phoneFormat phonenumber
 	num, err := phonenumbers.Parse(phone, defaultRegionCode)
 	if err != nil {
 		return "", err
+	}
+
+	if !phonenumbers.IsValidNumber(num) {
+		return "", fmt.Errorf("phone number %s is invalid phone for region %s %s", phone, defaultRegionCode, phonenumbers.GetRegionCodeForNumber(num))
 	}
 
 	formattedNum := phonenumbers.Format(num, phoneFormat)
