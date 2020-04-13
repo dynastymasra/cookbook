@@ -4,11 +4,11 @@ import "encoding/json"
 
 // JSend used JSend format with some modification
 type JSend struct {
-	Status  string `json:"status"`
-	Message string `json:"message,omitempty"`
-	Data    *JSON  `json:"data,omitempty"`
-	Meta    *Meta  `json:"meta,omitempty"`
-	Code    string `json:"code,omitempty"`
+	Status  string      `json:"status"`
+	Message string      `json:"message,omitempty"`
+	Data    *JSON       `json:"data,omitempty"`
+	Meta    *Meta       `json:"meta,omitempty"`
+	Code    interface{} `json:"code,omitempty"`
 }
 
 // Meta data used for JSON response
