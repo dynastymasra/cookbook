@@ -6,7 +6,7 @@ import "encoding/json"
 type JSend struct {
 	Status  string      `json:"status"`
 	Message string      `json:"message,omitempty"`
-	Data    *JSON       `json:"data,omitempty"`
+	Data    interface{} `json:"data,omitempty"`
 	Meta    *Meta       `json:"meta,omitempty"`
 	Code    interface{} `json:"code,omitempty"`
 }
@@ -53,7 +53,7 @@ func ErrorResponse(msg string, code interface{}) JSend {
 }
 
 // SuccessDataResponse used to return response JSON format if have data value
-func SuccessDataResponse(data *JSON, meta *Meta) JSend {
+func SuccessDataResponse(data interface{}, meta *Meta) JSend {
 	return JSend{Status: "success", Data: data, Meta: meta}
 }
 
