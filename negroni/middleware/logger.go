@@ -5,7 +5,7 @@ import (
 	"net/http"
 	"time"
 
-	uuid "github.com/satori/go.uuid"
+	"github.com/labstack/gommon/random"
 
 	"github.com/dynastymasra/cookbook"
 
@@ -21,7 +21,7 @@ func LogrusLog(name string) negroni.HandlerFunc {
 
 		requestID := r.Header.Get(cookbook.XRequestID)
 		if len(requestID) < 1 {
-			requestID = uuid.NewV4().String()
+			requestID = random.New().String(12, random.Alphanumeric)
 		}
 		next(w, r.WithContext(context.WithValue(r.Context(), cookbook.RequestID, requestID)))
 
