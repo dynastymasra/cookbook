@@ -16,7 +16,7 @@ import (
 )
 
 // LogrusLog middleware function for log HTTP request. combine with RequestID middleware first to add request id in log
-func LogrusLog(name string) negroni.HandlerFunc {
+func LogrusLog(name, reqID string) negroni.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		startTime := time.Now().UTC()
 
@@ -25,21 +25,21 @@ func LogrusLog(name string) negroni.HandlerFunc {
 			entropy := rand.New(rand.NewSource(rand.Int63n(startTime.UnixNano())))
 			requestID = ulid.MustNew(ulid.Timestamp(startTime), entropy).String()
 		}
-		next(w, r.WithContext(context.WithValue(r.Context(), cookbook.RequestID, requestID)))
+		next(w, r.WithContext(context.WithValue(r.Context(), reqID, requestID)))
 
 		responseTime := time.Now().UTC()
 		deltaTime := responseTime.Sub(startTime)
 
 		logrus.WithFields(logrus.Fields{
-			"start":            startTime.Format(time.RFC3339),
-			"delta":            deltaTime,
-			"finish":           responseTime.Format(time.RFC3339),
-			"proxy":            r.RemoteAddr,
-			"url":              r.URL.Path,
-			"method":           r.Method,
-			"source":           r.Header.Get("X-FORWARDED-FOR"),
-			"headers":          r.Header,
-			cookbook.RequestID: requestID,
-		}).Infoln("HTTP Request", name)
+			"service": name,
+			"start":   startTime.Format(time.RFC3339),
+			"delta":   deltaTime,
+			"finish":  responseTime.Format(time.RFC3339),
+			"proxy":   r.RemoteAddr,
+			"url":     r.URL.Path,
+			"method":  r.Method,
+			"headers": r.Header,
+			reqID:     requestID,
+		}).Infoln("HTTP Request")
 	}
 }

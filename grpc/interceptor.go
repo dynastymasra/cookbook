@@ -41,7 +41,7 @@ func AuthInterceptor(expectedToken string) GRPCAuth.AuthFunc {
 //LogrusUnaryInterceptor gRPC interceptor to log unary request duration status
 this function will set field request_id from metadata
 */
-func LogrusUnaryInterceptor(logger *logrus.Entry, reqID string, keys ...string) grpc.UnaryServerInterceptor {
+func LogrusUnaryInterceptor(logger *logrus.Entry, name, reqID string, keys ...string) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		startTime := time.Now().UTC()
 
@@ -56,9 +56,10 @@ func LogrusUnaryInterceptor(logger *logrus.Entry, reqID string, keys ...string) 
 		newCtx := context.WithValue(ctx, reqID, requestID)
 
 		log := logger.WithFields(logrus.Fields{
-			"method": info.FullMethod,
-			"start":  startTime.Format(time.RFC3339),
-			reqID:    requestID,
+			"service": name,
+			"method":  info.FullMethod,
+			"start":   startTime.Format(time.RFC3339),
+			reqID:     requestID,
 		})
 
 		resp, err := handler(newCtx, req)
@@ -88,7 +89,7 @@ func LogrusUnaryInterceptor(logger *logrus.Entry, reqID string, keys ...string) 
 LogrusStreamInterceptor gRPC interceptor to log stream request duration status
 this function will set field request_id from metadata
 */
-func LogrusStreamInterceptor(logger *logrus.Entry, reqID string, keys ...string) grpc.StreamServerInterceptor {
+func LogrusStreamInterceptor(logger *logrus.Entry, name, reqID string, keys ...string) grpc.StreamServerInterceptor {
 	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		startTime := time.Now().UTC()
 
@@ -100,9 +101,10 @@ func LogrusStreamInterceptor(logger *logrus.Entry, reqID string, keys ...string)
 		}
 
 		log := logger.WithFields(logrus.Fields{
-			"method": info.FullMethod,
-			"start":  startTime.Format(time.RFC3339),
-			reqID:    metautils.ExtractIncoming(stream.Context()).Get(reqID),
+			"service": name,
+			"method":  info.FullMethod,
+			"start":   startTime.Format(time.RFC3339),
+			reqID:     metautils.ExtractIncoming(stream.Context()).Get(reqID),
 		})
 
 		err := handler(srv, stream)

@@ -6,7 +6,7 @@ import (
 
 	"github.com/dynastymasra/cookbook"
 	"github.com/gorilla/mux"
-	"github.com/newrelic/go-agent"
+	newrelic "github.com/newrelic/go-agent"
 	"github.com/urfave/negroni"
 )
 
@@ -19,10 +19,10 @@ func NewRelicHandler(app newrelic.Application) negroni.HandlerFunc {
 }
 
 // NewRelicInstrumentation used for add request id to new relic attribute
-func NewRelicInstrumentation() negroni.HandlerFunc {
+func NewRelicInstrumentation(reqID string) negroni.HandlerFunc {
 	return negroni.HandlerFunc(func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		if trx := newrelic.FromContext(r.Context()); trx != nil {
-			trx.AddAttribute(cookbook.XRequestID, r.Context().Value(cookbook.RequestID))
+			trx.AddAttribute(cookbook.XRequestID, r.Context().Value(reqID))
 
 			next(w, newrelic.RequestWithTransactionContext(r, trx))
 		}
