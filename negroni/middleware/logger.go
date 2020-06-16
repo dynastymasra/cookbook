@@ -2,10 +2,11 @@ package middleware
 
 import (
 	"context"
+	"math/rand"
 	"net/http"
 	"time"
 
-	"github.com/labstack/gommon/random"
+	"github.com/oklog/ulid/v2"
 
 	"github.com/dynastymasra/cookbook"
 
@@ -21,7 +22,8 @@ func LogrusLog(name string) negroni.HandlerFunc {
 
 		requestID := r.Header.Get(cookbook.XRequestID)
 		if len(requestID) < 1 {
-			requestID = random.New().String(12, random.Alphanumeric)
+			entropy := rand.New(rand.NewSource(rand.Int63n(startTime.UnixNano())))
+			requestID = ulid.MustNew(ulid.Timestamp(startTime), entropy).String()
 		}
 		next(w, r.WithContext(context.WithValue(r.Context(), cookbook.RequestID, requestID)))
 
