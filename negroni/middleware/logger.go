@@ -31,13 +31,13 @@ func LogrusLog(name string) negroni.HandlerFunc {
 		deltaTime := responseTime.Sub(startTime)
 
 		logrus.WithFields(logrus.Fields{
-			"request_time":     startTime.Format(time.RFC3339),
-			"delta_time":       deltaTime,
-			"response_time":    responseTime.Format(time.RFC3339),
-			"request_proxy":    r.RemoteAddr,
+			"start":            startTime.Format(time.RFC3339),
+			"delta":            deltaTime,
+			"finish":           responseTime.Format(time.RFC3339),
+			"proxy":            r.RemoteAddr,
 			"url":              r.URL.Path,
 			"method":           r.Method,
-			"request_source":   r.Header.Get("X-FORWARDED-FOR"),
+			"source":           r.Header.Get("X-FORWARDED-FOR"),
 			"headers":          r.Header,
 			cookbook.RequestID: requestID,
 		}).Infoln("HTTP Request", name)

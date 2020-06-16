@@ -1,9 +1,6 @@
 package cookbook
 
 const (
-	// RequestID Incoming request id
-	RequestID = "request_id"
-
 	// Bearer
 	Bearer = "Bearer"
 
