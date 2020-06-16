@@ -15,6 +15,19 @@ import (
 	"github.com/urfave/negroni"
 )
 
+func RequestID(reqID string) negroni.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
+		startTime := time.Now().UTC()
+
+		requestID := r.Header.Get(cookbook.XRequestID)
+		if len(requestID) < 1 {
+			entropy := rand.New(rand.NewSource(rand.Int63n(startTime.UnixNano())))
+			requestID = ulid.MustNew(ulid.Timestamp(startTime), entropy).String()
+		}
+		next(w, r.WithContext(context.WithValue(r.Context(), reqID, requestID)))
+	}
+}
+
 // LogrusLog middleware function for log HTTP request. combine with RequestID middleware first to add request id in log
 func LogrusLog(name, reqID string) negroni.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
