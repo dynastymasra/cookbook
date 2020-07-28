@@ -12,7 +12,7 @@ import (
 
 	"github.com/sirupsen/logrus"
 
-	"github.com/urfave/negroni"
+	"github.com/urfave/negroni/v2"
 )
 
 func RequestID(reqID string) negroni.HandlerFunc {

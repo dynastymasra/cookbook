@@ -7,7 +7,7 @@ import (
 	"github.com/dynastymasra/cookbook"
 	"github.com/gorilla/mux"
 	newrelic "github.com/newrelic/go-agent"
-	"github.com/urfave/negroni"
+	"github.com/urfave/negroni/v2"
 )
 
 // NewRelicHandler use new relic handler in middleware
