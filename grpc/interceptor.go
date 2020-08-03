@@ -2,9 +2,11 @@ package grpc
 
 import (
 	"context"
+	"math/rand"
 	"time"
 
 	"github.com/grpc-ecosystem/go-grpc-middleware/util/metautils"
+	"github.com/oklog/ulid/v2"
 
 	"github.com/sirupsen/logrus"
 	"google.golang.org/grpc"
@@ -41,7 +43,7 @@ func AuthInterceptor(expectedToken string) GRPCAuth.AuthFunc {
 //LogrusUnaryInterceptor gRPC interceptor to log unary request duration status
 this function will set field request_id from metadata
 */
-func LogrusUnaryInterceptor(logger *logrus.Entry, name, reqID string, keys ...string) grpc.UnaryServerInterceptor {
+func LogrusUnaryInterceptor(logger *logrus.Entry, reqID string, keys ...string) grpc.UnaryServerInterceptor {
 	return func(ctx context.Context, req interface{}, info *grpc.UnaryServerInfo, handler grpc.UnaryHandler) (interface{}, error) {
 		startTime := time.Now().UTC()
 
@@ -53,13 +55,17 @@ func LogrusUnaryInterceptor(logger *logrus.Entry, name, reqID string, keys ...st
 		}
 
 		requestID := metautils.ExtractIncoming(ctx).Get(reqID)
+		if len(requestID) < 1 {
+			entropy := rand.New(rand.NewSource(rand.Int63n(startTime.UnixNano())))
+			requestID = ulid.MustNew(ulid.Timestamp(startTime), entropy).String()
+		}
+
 		newCtx := context.WithValue(ctx, reqID, requestID)
 
 		log := logger.WithFields(logrus.Fields{
-			"service": name,
-			"method":  info.FullMethod,
-			"start":   startTime.Format(time.RFC3339),
-			reqID:     requestID,
+			"method": info.FullMethod,
+			"start":  startTime.Format(time.RFC3339),
+			reqID:    requestID,
 		})
 
 		resp, err := handler(newCtx, req)
@@ -79,7 +85,7 @@ func LogrusUnaryInterceptor(logger *logrus.Entry, name, reqID string, keys ...st
 		log.WithFields(logrus.Fields{
 			"finish": responseTime.Format(time.RFC3339),
 			"delta":  deltaTime,
-		}).Infoln("gRPC request")
+		}).Infoln("GRPC request")
 
 		return resp, err
 	}
@@ -89,7 +95,7 @@ func LogrusUnaryInterceptor(logger *logrus.Entry, name, reqID string, keys ...st
 LogrusStreamInterceptor gRPC interceptor to log stream request duration status
 this function will set field request_id from metadata
 */
-func LogrusStreamInterceptor(logger *logrus.Entry, name, reqID string, keys ...string) grpc.StreamServerInterceptor {
+func LogrusStreamInterceptor(logger *logrus.Entry, reqID string, keys ...string) grpc.StreamServerInterceptor {
 	return func(srv interface{}, stream grpc.ServerStream, info *grpc.StreamServerInfo, handler grpc.StreamHandler) error {
 		startTime := time.Now().UTC()
 
@@ -100,11 +106,16 @@ func LogrusStreamInterceptor(logger *logrus.Entry, name, reqID string, keys ...s
 			}
 		}
 
+		requestID := metautils.ExtractIncoming(stream.Context()).Get(reqID)
+		if len(requestID) < 1 {
+			entropy := rand.New(rand.NewSource(rand.Int63n(startTime.UnixNano())))
+			requestID = ulid.MustNew(ulid.Timestamp(startTime), entropy).String()
+		}
+
 		log := logger.WithFields(logrus.Fields{
-			"service": name,
-			"method":  info.FullMethod,
-			"start":   startTime.Format(time.RFC3339),
-			reqID:     metautils.ExtractIncoming(stream.Context()).Get(reqID),
+			"method": info.FullMethod,
+			"start":  startTime.Format(time.RFC3339),
+			reqID:    requestID,
 		})
 
 		err := handler(srv, stream)
@@ -124,7 +135,7 @@ func LogrusStreamInterceptor(logger *logrus.Entry, name, reqID string, keys ...s
 		log.WithFields(logrus.Fields{
 			"finish": responseTime.Format(time.RFC3339),
 			"delta":  deltaTime,
-		}).Infoln("gRPC request")
+		}).Infoln("GRPC request")
 
 		return err
 	}
