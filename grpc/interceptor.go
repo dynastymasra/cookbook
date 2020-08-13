@@ -60,36 +60,29 @@ func LogrusUnaryInterceptor(logger *logrus.Entry, reqID string, keys ...string) 
 			requestID = ulid.MustNew(ulid.Timestamp(startTime), entropy).String()
 		}
 
-		newCtx := context.WithValue(ctx, reqID, requestID)
-
-		log := logger.WithFields(logrus.Fields{
-			"method": info.FullMethod,
-			"start":  startTime.Format(time.RFC3339),
-			reqID:    requestID,
-		})
-
-		resp, err := handler(newCtx, req)
+		resp, err := handler(context.WithValue(ctx, reqID, requestID), req)
 
 		responseTime := time.Now().UTC()
 		deltaTime := responseTime.Sub(startTime)
 
-		if err != nil {
-			log.WithFields(logrus.Fields{
-				"finish": responseTime.Format(time.RFC3339),
-				"delta":  deltaTime,
-			}).WithError(err).Warnln("gRPC request")
-
-			return resp, err
-		}
-
-		log.WithFields(logrus.Fields{
+		logger.WithFields(logrus.Fields{
+			"method": info.FullMethod,
+			"start":  startTime.Format(time.RFC3339),
 			"finish": responseTime.Format(time.RFC3339),
 			"delta":  deltaTime,
-		}).Infoln("GRPC request")
+			reqID:    requestID,
+		}).Infoln("GRPC Request")
 
 		return resp, err
 	}
 }
+
+type serverStreamWrapper struct {
+	grpc.ServerStream
+	ctx context.Context
+}
+
+func (w *serverStreamWrapper) Context() context.Context { return w.ctx }
 
 /**
 LogrusStreamInterceptor gRPC interceptor to log stream request duration status
@@ -112,30 +105,23 @@ func LogrusStreamInterceptor(logger *logrus.Entry, reqID string, keys ...string)
 			requestID = ulid.MustNew(ulid.Timestamp(startTime), entropy).String()
 		}
 
-		log := logger.WithFields(logrus.Fields{
-			"method": info.FullMethod,
-			"start":  startTime.Format(time.RFC3339),
-			reqID:    requestID,
-		})
+		streamWrapper := &serverStreamWrapper{
+			ServerStream: stream,
+			ctx:          context.WithValue(stream.Context(), reqID, requestID),
+		}
 
-		err := handler(srv, stream)
+		err := handler(srv, streamWrapper)
 
 		responseTime := time.Now().UTC()
 		deltaTime := responseTime.Sub(startTime)
 
-		if err != nil {
-			log.WithFields(logrus.Fields{
-				"finish": responseTime.Format(time.RFC3339),
-				"delta":  deltaTime,
-			}).WithError(err).Warnln("gRPC request")
-
-			return err
-		}
-
-		log.WithFields(logrus.Fields{
+		logger.WithFields(logrus.Fields{
+			"method": info.FullMethod,
+			"start":  startTime.Format(time.RFC3339),
 			"finish": responseTime.Format(time.RFC3339),
 			"delta":  deltaTime,
-		}).Infoln("GRPC request")
+			reqID:    requestID,
+		}).Infoln("GRPC Request")
 
 		return err
 	}
