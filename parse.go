@@ -4,6 +4,10 @@ import (
 	"encoding/json"
 	"fmt"
 	"strconv"
+	"time"
+
+	"github.com/golang/protobuf/ptypes"
+	"github.com/golang/protobuf/ptypes/timestamp"
 
 	"github.com/nyaruka/phonenumbers"
 )
@@ -68,4 +72,32 @@ func ParseStringToPhone(phone, defaultRegionCode string, phoneFormat phonenumber
 	formattedNum := phonenumbers.Format(num, phoneFormat)
 
 	return formattedNum, nil
+}
+
+// ParsePtrGRPCTimeToPtrTime Parse pointer timestamp from GRPC struct and return nil if empty or invalid timestamp
+func ParsePtrGRPCTimeToPtrTime(t *timestamp.Timestamp) *time.Time {
+	ts, err := ptypes.Timestamp(t)
+	if err != nil {
+		return nil
+	}
+
+	if ts.IsZero() {
+		return nil
+	}
+
+	return &ts
+}
+
+// ParsePtrGRPCTimeToTime parse pointer timestamp from GRPC and return new timestamp if nil or error
+func ParsePtrGRPCTimeToTime(t *timestamp.Timestamp) time.Time {
+	ts, err := ptypes.Timestamp(t)
+	if err != nil {
+		return time.Now().UTC()
+	}
+
+	if ts.IsZero() {
+		return time.Now().UTC()
+	}
+
+	return ts
 }

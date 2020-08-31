@@ -3,6 +3,7 @@ module github.com/dynastymasra/cookbook
 go 1.13
 
 require (
+	github.com/golang/protobuf v1.3.3
 	github.com/gorilla/mux v1.7.4
 	github.com/graphql-go/graphql v0.7.9
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.0

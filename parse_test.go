@@ -2,6 +2,11 @@ package cookbook_test
 
 import (
 	"testing"
+	"time"
+
+	"github.com/golang/protobuf/ptypes"
+
+	"github.com/golang/protobuf/ptypes/timestamp"
 
 	"github.com/nyaruka/phonenumbers"
 
@@ -137,4 +142,64 @@ func (p *ParseSuite) Test_ParseStringToPhone_Failed() {
 	assert.Error(p.T(), err4)
 	assert.Error(p.T(), err5)
 	assert.Error(p.T(), err6)
+}
+
+func (p *ParseSuite) Test_ParsePtrGRPCTimeToPtrTime_Nil() {
+	result := cookbook.ParsePtrGRPCTimeToPtrTime(nil)
+
+	assert.Nil(p.T(), result)
+}
+
+func (p *ParseSuite) Test_ParsePtrGRPCTimeToPtrTime_Zero() {
+	t := &timestamp.Timestamp{Seconds: -62135596800, Nanos: 0}
+	result := cookbook.ParsePtrGRPCTimeToPtrTime(t)
+
+	assert.Nil(p.T(), result)
+}
+
+func (p *ParseSuite) Test_ParsePtrGRPCTimeToPtrTime() {
+	t := ptypes.TimestampNow()
+	result := cookbook.ParsePtrGRPCTimeToPtrTime(t)
+
+	assert.NotNil(p.T(), result)
+}
+
+func (p *ParseSuite) Test_ParsePtrGRPCTimeToTime_Nil() {
+	ts := time.Now().UTC()
+	result := cookbook.ParsePtrGRPCTimeToTime(nil)
+
+	assert.NotNil(p.T(), result)
+	assert.Equal(p.T(), ts.Year(), result.Year())
+	assert.Equal(p.T(), ts.Month(), result.Month())
+	assert.Equal(p.T(), ts.Day(), result.Day())
+	assert.Equal(p.T(), ts.Hour(), result.Hour())
+	assert.Equal(p.T(), ts.Minute(), result.Minute())
+}
+
+func (p *ParseSuite) Test_ParsePtrGRPCTimeToTime_Zero() {
+	ts := time.Now().UTC()
+	t := &timestamp.Timestamp{Seconds: -62135596800, Nanos: 0}
+
+	result := cookbook.ParsePtrGRPCTimeToTime(t)
+
+	assert.NotNil(p.T(), result)
+	assert.Equal(p.T(), ts.Year(), result.Year())
+	assert.Equal(p.T(), ts.Month(), result.Month())
+	assert.Equal(p.T(), ts.Day(), result.Day())
+	assert.Equal(p.T(), ts.Hour(), result.Hour())
+	assert.Equal(p.T(), ts.Minute(), result.Minute())
+}
+
+func (p *ParseSuite) Test_ParsePtrGRPCTimeToTime() {
+	t := ptypes.TimestampNow()
+	ts, _ := ptypes.Timestamp(t)
+	result := cookbook.ParsePtrGRPCTimeToTime(t)
+
+	assert.NotNil(p.T(), result)
+	assert.Equal(p.T(), ts.Year(), result.Year())
+	assert.Equal(p.T(), ts.Month(), result.Month())
+	assert.Equal(p.T(), ts.Day(), result.Day())
+	assert.Equal(p.T(), ts.Hour(), result.Hour())
+	assert.Equal(p.T(), ts.Minute(), result.Minute())
+	assert.Equal(p.T(), ts.Second(), result.Second())
 }
