@@ -77,12 +77,12 @@ func LogrusUnaryInterceptor(logger *logrus.Entry, reqID string, keys ...string) 
 	}
 }
 
-type serverStreamWrapper struct {
+type ServerStreamWrapper struct {
 	grpc.ServerStream
 	ctx context.Context
 }
 
-func (w *serverStreamWrapper) Context() context.Context { return w.ctx }
+func (w *ServerStreamWrapper) Context() context.Context { return w.ctx }
 
 /**
 LogrusStreamInterceptor gRPC interceptor to log stream request duration status
@@ -105,7 +105,7 @@ func LogrusStreamInterceptor(logger *logrus.Entry, reqID string, keys ...string)
 			requestID = ulid.MustNew(ulid.Timestamp(startTime), entropy).String()
 		}
 
-		streamWrapper := &serverStreamWrapper{
+		streamWrapper := &ServerStreamWrapper{
 			ServerStream: stream,
 			ctx:          context.WithValue(stream.Context(), reqID, requestID),
 		}
