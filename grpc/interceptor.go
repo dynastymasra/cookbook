@@ -49,7 +49,7 @@ func LogrusUnaryInterceptor(logger *logrus.Entry, reqID string, keys ...string) 
 
 		for _, key := range keys {
 			val := metautils.ExtractIncoming(ctx).Get(key)
-			if val == "" {
+			if len(val) < 1 {
 				return nil, status.Errorf(codes.FailedPrecondition, "metadata key %s not found", key)
 			}
 		}
@@ -94,7 +94,7 @@ func LogrusStreamInterceptor(logger *logrus.Entry, reqID string, keys ...string)
 
 		for _, key := range keys {
 			val := metautils.ExtractIncoming(stream.Context()).Get(key)
-			if val == "" {
+			if len(val) < 1 {
 				return status.Errorf(codes.FailedPrecondition, "metadata key not found")
 			}
 		}
