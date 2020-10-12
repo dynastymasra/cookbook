@@ -56,6 +56,14 @@ type ErrorMessage struct {
 	Error error
 }
 
+func NewErrorMessage(code int, title string, err error) *ErrorMessage {
+	return &ErrorMessage{
+		Code:  code,
+		Title: title,
+		Error: err,
+	}
+}
+
 type ClientError struct {
 	HTTPCode int
 	Message  []ErrorMessage
