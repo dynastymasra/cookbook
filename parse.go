@@ -6,8 +6,7 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/golang/protobuf/ptypes"
-	"github.com/golang/protobuf/ptypes/timestamp"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/nyaruka/phonenumbers"
 )
@@ -75,11 +74,12 @@ func ParseStringToPhone(phone, defaultRegionCode string, phoneFormat phonenumber
 }
 
 // ParsePtrGRPCTimeToPtrTime Parse pointer timestamp from GRPC struct and return nil if empty or invalid timestamp
-func ParsePtrGRPCTimeToPtrTime(t *timestamp.Timestamp) *time.Time {
-	ts, err := ptypes.Timestamp(t)
-	if err != nil {
+func ParsePtrGRPCTimeToPtrTime(t *timestamppb.Timestamp) *time.Time {
+	if t == nil {
 		return nil
 	}
+
+	ts := t.AsTime()
 
 	if ts.IsZero() {
 		return nil
@@ -89,11 +89,12 @@ func ParsePtrGRPCTimeToPtrTime(t *timestamp.Timestamp) *time.Time {
 }
 
 // ParsePtrGRPCTimeToTime parse pointer timestamp from GRPC and return new timestamp if nil or error
-func ParsePtrGRPCTimeToTime(t *timestamp.Timestamp) time.Time {
-	ts, err := ptypes.Timestamp(t)
-	if err != nil {
+func ParsePtrGRPCTimeToTime(t *timestamppb.Timestamp) time.Time {
+	if t == nil {
 		return time.Now().UTC()
 	}
+
+	ts := t.AsTime()
 
 	if ts.IsZero() {
 		return time.Now().UTC()

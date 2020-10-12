@@ -4,9 +4,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/golang/protobuf/ptypes"
-
-	"github.com/golang/protobuf/ptypes/timestamp"
+	"google.golang.org/protobuf/types/known/timestamppb"
 
 	"github.com/nyaruka/phonenumbers"
 
@@ -151,14 +149,14 @@ func (p *ParseSuite) Test_ParsePtrGRPCTimeToPtrTime_Nil() {
 }
 
 func (p *ParseSuite) Test_ParsePtrGRPCTimeToPtrTime_Zero() {
-	t := &timestamp.Timestamp{Seconds: -62135596800, Nanos: 0}
+	t := &timestamppb.Timestamp{Seconds: -62135596800, Nanos: 0}
 	result := cookbook.ParsePtrGRPCTimeToPtrTime(t)
 
 	assert.Nil(p.T(), result)
 }
 
 func (p *ParseSuite) Test_ParsePtrGRPCTimeToPtrTime() {
-	t := ptypes.TimestampNow()
+	t := timestamppb.Now()
 	result := cookbook.ParsePtrGRPCTimeToPtrTime(t)
 
 	assert.NotNil(p.T(), result)
@@ -178,7 +176,7 @@ func (p *ParseSuite) Test_ParsePtrGRPCTimeToTime_Nil() {
 
 func (p *ParseSuite) Test_ParsePtrGRPCTimeToTime_Zero() {
 	ts := time.Now().UTC()
-	t := &timestamp.Timestamp{Seconds: -62135596800, Nanos: 0}
+	t := &timestamppb.Timestamp{Seconds: -62135596800, Nanos: 0}
 
 	result := cookbook.ParsePtrGRPCTimeToTime(t)
 
@@ -191,8 +189,8 @@ func (p *ParseSuite) Test_ParsePtrGRPCTimeToTime_Zero() {
 }
 
 func (p *ParseSuite) Test_ParsePtrGRPCTimeToTime() {
-	t := ptypes.TimestampNow()
-	ts, _ := ptypes.Timestamp(t)
+	t := timestamppb.Now()
+	ts := t.AsTime()
 	result := cookbook.ParsePtrGRPCTimeToTime(t)
 
 	assert.NotNil(p.T(), result)
