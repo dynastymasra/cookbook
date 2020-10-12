@@ -42,11 +42,21 @@ const (
 	ErrTooManyRequestsCode      = 40429
 	ErrHeaderTooLargeCode       = 40431
 
-	ErrDatabaseUnavailableCode = 50501
+	ErrDatabaseUnavailableCode = 50000
 
-	ErrInternalServiceCode    = 50500
-	ErrServiceUnavailableCode = 50501
-	ErrUnknownCode            = 99999
+	ErrInternalServiceCode       = 50500
+	ErrNotImplementedCode        = 50501
+	ErrBadGatewayCode            = 50502
+	ErrServiceUnavailableCode    = 50503
+	ErrGatewayCode               = 50504
+	ErrNotSupportedCode          = 50505
+	ErrVariantCode               = 50506
+	ErrInsufficientStorageCode   = 50507
+	ErrLoopCode                  = 50508
+	ErrNotExtendedCode           = 50510
+	ErrNetworkAuthenticationCode = 50511
+
+	ErrUnknownCode = 99999
 )
 
 var (
@@ -224,6 +234,45 @@ func FromServerError(err error) *ServerError {
 			Code:  ErrInternalServiceCode,
 			Title: "Unknown",
 			Error: err,
+		},
+	}
+}
+
+func HTTPtoServerError(status int, title, body string) *ServerError {
+	var code int
+	switch status {
+	case http.StatusInternalServerError:
+		code = ErrInternalServiceCode
+	case http.StatusNotImplemented:
+		code = ErrNotImplementedCode
+	case http.StatusBadGateway:
+		code = ErrBadGatewayCode
+	case http.StatusServiceUnavailable:
+		code = ErrServiceUnavailableCode
+	case http.StatusGatewayTimeout:
+		code = ErrGatewayCode
+	case http.StatusHTTPVersionNotSupported:
+		code = ErrNotSupportedCode
+	case http.StatusVariantAlsoNegotiates:
+		code = ErrVariantCode
+	case http.StatusInsufficientStorage:
+		code = ErrInsufficientStorageCode
+	case http.StatusLoopDetected:
+		code = ErrLoopCode
+	case http.StatusNotExtended:
+		code = ErrNotExtendedCode
+	case http.StatusNetworkAuthenticationRequired:
+		code = ErrNetworkAuthenticationCode
+	default:
+		code = ErrUnknownCode
+	}
+
+	return &ServerError{
+		HTTPCode: status,
+		Message: ErrorMessage{
+			Code:  code,
+			Title: title,
+			Error: errors.New(body),
 		},
 	}
 }
