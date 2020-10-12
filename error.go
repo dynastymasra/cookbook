@@ -22,6 +22,8 @@ const (
 
 	ErrInternalServiceCode     = 50000
 	ErrDatabaseUnavailableCode = 50100
+
+	ErrUnknownCode = 99999
 )
 
 var (
@@ -85,21 +87,18 @@ func NewClientError(code int, msg ...ErrorMessage) *ClientError {
 	}
 }
 
-func FromClientError(err error) *ClientError {
-	if msg, ok := err.(*ClientError); ok {
-		return msg
+func ToJSONList(msg []ErrorMessage) []JSON {
+	var res []JSON
+
+	for _, v := range msg {
+		res = append(res, JSON{
+			"code":    v.Code,
+			"title":   v.Title,
+			"message": v.Error.Error(),
+		})
 	}
 
-	return &ClientError{
-		HTTPCode: http.StatusTeapot,
-		Message: []ErrorMessage{
-			{
-				Code:  ErrInternalServiceCode,
-				Title: "Unknown",
-				Error: err,
-			},
-		},
-	}
+	return res
 }
 
 type ServerError struct {
@@ -148,7 +147,7 @@ func ParseValidator(err error) []JSON {
 		}
 	default:
 		res = append(res, JSON{
-			"code":    ErrInvalidValueCode,
+			"code":    ErrUnknownCode,
 			"title":   "Unknown",
 			"message": err.Error(),
 		})
