@@ -13,6 +13,7 @@ const (
 
 	ErrEndpointNotFoundCode = 40404
 	ErrMethodNotAllowedCode = 40405
+	ErrReadRequestBodyCode  = 40406
 	ErrDuplicateDataCode    = 40409
 
 	ErrInternalServiceCode     = 50000
