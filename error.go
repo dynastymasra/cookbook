@@ -27,6 +27,7 @@ var (
 		Error: errors.New(ErrResourceNotExist),
 	}
 
+	// ErrDatabaseConnectionFailed is a message to inform if database connection failed or refuse
 	ErrDatabaseConnectionFailed = ErrorMessage{
 		Code:  ErrDatabaseUnavailable,
 		Title: "Database",

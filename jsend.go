@@ -43,8 +43,8 @@ func SuccessResponse() JSend {
 }
 
 // FailResponse is used to return response with JSON format if failure from client side
-func FailResponse(data interface{}, code interface{}) JSend {
-	return JSend{Status: "failed", Data: data, Code: code}
+func FailResponse(data interface{}) JSend {
+	return JSend{Status: "failed", Data: data}
 }
 
 // ErrorResponse is used return response with JSON format if failure in server side
