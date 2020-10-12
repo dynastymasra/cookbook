@@ -93,7 +93,7 @@ func (q *Query) Ordering(property, direction string) *Query {
 	return q
 }
 
-func TranslateQuery(query *Query) (interface{}, *options.FindOptions) {
+func TranslateQuery(query *Query) (bson.D, *options.FindOptions) {
 	limit := int64(query.Limit)
 	skip := int64(query.Offset)
 
@@ -150,5 +150,5 @@ func TranslateQuery(query *Query) (interface{}, *options.FindOptions) {
 		Skip:  &skip,
 	}
 
-	return nil, option
+	return d, option
 }
