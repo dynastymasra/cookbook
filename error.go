@@ -1,15 +1,22 @@
 package cookbook
 
-import "errors"
+import (
+	"errors"
+	"fmt"
+	"net/http"
+)
 
 const (
-	ErrResourceNotExist = "the requested resource doesn't exists"
-	ErrPrimaryDatabase  = "the database connection is failed"
+	ErrResourceNotExist  = "the requested resource doesn't exists"
+	ErrPrimaryDatabase   = "the database connection is failed"
+	ErrErrDuplicateDataM = "the data has duplicated"
 
-	ErrEndpointNotFoundCode = 4404
-	ErrMethodNotAllowedCode = 4405
+	ErrEndpointNotFoundCode = 40404
+	ErrMethodNotAllowedCode = 40405
+	ErrDuplicateDataCode    = 40409
 
-	ErrDatabaseUnavailable = 5100
+	ErrInternalServiceCode     = 50000
+	ErrDatabaseUnavailableCode = 50100
 )
 
 var (
@@ -29,9 +36,16 @@ var (
 
 	// ErrDatabaseConnectionFailed is a message to inform if database connection failed or refuse
 	ErrDatabaseConnectionFailed = ErrorMessage{
-		Code:  ErrDatabaseUnavailable,
+		Code:  ErrDatabaseUnavailableCode,
 		Title: "Database",
 		Error: errors.New(ErrPrimaryDatabase),
+	}
+
+	// ErrErrDuplicateData error message if the data inserted to database has duplicate
+	ErrErrDuplicateData = ErrorMessage{
+		Code:  ErrDuplicateDataCode,
+		Title: "Duplicate",
+		Error: errors.New(ErrErrDuplicateDataM),
 	}
 )
 
@@ -40,4 +54,68 @@ type ErrorMessage struct {
 	Code  int
 	Title string
 	Error error
+}
+
+type ClientError struct {
+	HTTPCode int
+	Message  []ErrorMessage
+}
+
+func (c *ClientError) Error() string {
+	return fmt.Sprintf("%+v", c.Message)
+}
+
+func NewClientError(code int, msg ...ErrorMessage) *ClientError {
+	return &ClientError{
+		HTTPCode: code,
+		Message:  msg,
+	}
+}
+
+func FromClientError(err error) *ClientError {
+	if msg, ok := err.(*ClientError); ok {
+		return msg
+	}
+
+	return &ClientError{
+		HTTPCode: http.StatusTeapot,
+		Message: []ErrorMessage{
+			{
+				Code:  ErrInternalServiceCode,
+				Title: "Unknown",
+				Error: err,
+			},
+		},
+	}
+}
+
+type ServerError struct {
+	HTTPCode int
+	Message  ErrorMessage
+}
+
+func (s *ServerError) Error() string {
+	return s.Message.Error.Error()
+}
+
+func NewServerError(code int, msg ErrorMessage) *ServerError {
+	return &ServerError{
+		HTTPCode: code,
+		Message:  msg,
+	}
+}
+
+func FromServerError(err error) *ServerError {
+	if msg, ok := err.(*ServerError); ok {
+		return msg
+	}
+
+	return &ServerError{
+		HTTPCode: http.StatusInternalServerError,
+		Message: ErrorMessage{
+			Code:  ErrInternalServiceCode,
+			Title: "Unknown",
+			Error: err,
+		},
+	}
 }
