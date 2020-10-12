@@ -54,6 +54,13 @@ func NewOrdering(field, direction string) *Ordering {
 	}
 }
 
+func (q *Query) Slice(offset, limit int) *Query {
+	q.Offset = offset
+	q.Limit = limit
+
+	return q
+}
+
 // Order adds a sort order to the query
 func (q *Query) Ordering(property, direction string) *Query {
 	order := NewOrdering(property, direction)
