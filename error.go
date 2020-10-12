@@ -14,16 +14,39 @@ const (
 	ErrPrimaryDatabase   = "the database connection is failed"
 	ErrErrDuplicateDataM = "the data has duplicated"
 
-	ErrInvalidValueCode     = 40000
-	ErrEndpointNotFoundCode = 40404
-	ErrMethodNotAllowedCode = 40405
-	ErrReadRequestBodyCode  = 40406
-	ErrDuplicateDataCode    = 40409
+	ErrInvalidValueCode         = 40400
+	ErrUnauthorizedCode         = 40401
+	ErrPaymentRequiredCode      = 40402
+	ErrForbiddenCode            = 40403
+	ErrEndpointNotFoundCode     = 40404
+	ErrMethodNotAllowedCode     = 40405
+	ErrReadRequestBodyCode      = 40406
+	ErrProxyAuthRequiredCode    = 40407
+	ErrRequestTimeoutCode       = 40408
+	ErrDuplicateDataCode        = 40409
+	ErrDataMissingCode          = 40410
+	ErrLengthRequiredCode       = 40411
+	ErrPreconditionCode         = 40412
+	ErrDataToLargeCode          = 40413
+	ErrURITooLongCode           = 40414
+	ErrUnsupportedMediaTypeCode = 40415
+	ErrRangeTooLongCode         = 40416
+	ErrExpectationCode          = 40417
+	ErrMisdirectedRequestCode   = 40421
+	ErrUnprocessableEntityCode  = 40422
+	ErrDataLockedCode           = 40423
+	ErrFailedDependencyCode     = 40424
+	ErrTooEarlyCode             = 40425
+	ErrUpgradeRequiredCode      = 40426
+	ErrPreconditionRequiredCode = 40428
+	ErrTooManyRequestsCode      = 40429
+	ErrHeaderTooLargeCode       = 40431
 
-	ErrInternalServiceCode     = 50000
-	ErrDatabaseUnavailableCode = 50100
+	ErrDatabaseUnavailableCode = 50501
 
-	ErrUnknownCode = 99999
+	ErrInternalServiceCode    = 50500
+	ErrServiceUnavailableCode = 50501
+	ErrUnknownCode            = 99999
 )
 
 var (
@@ -87,7 +110,80 @@ func NewClientError(code int, msg ...ErrorMessage) *ClientError {
 	}
 }
 
-func ToJSONList(msg []ErrorMessage) []JSON {
+func HTTPToClientError(status int, title, body string) *ClientError {
+	var code int
+	switch status {
+	case http.StatusBadRequest:
+		code = ErrInvalidValueCode
+	case http.StatusUnauthorized:
+		code = ErrUnauthorizedCode
+	case http.StatusPaymentRequired:
+		code = ErrPaymentRequiredCode
+	case http.StatusForbidden:
+		code = ErrForbiddenCode
+	case http.StatusNotFound:
+		code = ErrEndpointNotFoundCode
+	case http.StatusMethodNotAllowed:
+		code = ErrMethodNotAllowedCode
+	case http.StatusNotAcceptable:
+		code = ErrReadRequestBodyCode
+	case http.StatusProxyAuthRequired:
+		code = ErrProxyAuthRequiredCode
+	case http.StatusRequestTimeout:
+		code = ErrRequestTimeoutCode
+	case http.StatusConflict:
+		code = ErrDuplicateDataCode
+	case http.StatusGone:
+		code = ErrDataMissingCode
+	case http.StatusLengthRequired:
+		code = ErrLengthRequiredCode
+	case http.StatusPreconditionFailed:
+		code = ErrPreconditionCode
+	case http.StatusRequestEntityTooLarge:
+		code = ErrDataToLargeCode
+	case http.StatusRequestURITooLong:
+		code = ErrURITooLongCode
+	case http.StatusUnsupportedMediaType:
+		code = ErrUnsupportedMediaTypeCode
+	case http.StatusRequestedRangeNotSatisfiable:
+		code = ErrRangeTooLongCode
+	case http.StatusExpectationFailed:
+		code = ErrExpectationCode
+	case http.StatusMisdirectedRequest:
+		code = ErrMisdirectedRequestCode
+	case http.StatusUnprocessableEntity:
+		code = ErrUnprocessableEntityCode
+	case http.StatusLocked:
+		code = ErrDataLockedCode
+	case http.StatusFailedDependency:
+		code = ErrFailedDependencyCode
+	case http.StatusTooEarly:
+		code = ErrTooEarlyCode
+	case http.StatusUpgradeRequired:
+		code = ErrUpgradeRequiredCode
+	case http.StatusPreconditionRequired:
+		code = ErrPreconditionRequiredCode
+	case http.StatusTooManyRequests:
+		code = ErrTooManyRequestsCode
+	case http.StatusRequestHeaderFieldsTooLarge:
+		code = ErrHeaderTooLargeCode
+	default:
+		code = ErrUnknownCode
+	}
+
+	return &ClientError{
+		HTTPCode: status,
+		Message: []ErrorMessage{
+			{
+				Code:  code,
+				Title: title,
+				Error: errors.New(body),
+			},
+		},
+	}
+}
+
+func ErrorMessageToJSONList(msg []ErrorMessage) []JSON {
 	var res []JSON
 
 	for _, v := range msg {
