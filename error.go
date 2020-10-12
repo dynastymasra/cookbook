@@ -4,6 +4,9 @@ import (
 	"errors"
 	"fmt"
 	"net/http"
+	"strings"
+
+	"github.com/go-playground/validator/v10"
 )
 
 const (
@@ -11,6 +14,7 @@ const (
 	ErrPrimaryDatabase   = "the database connection is failed"
 	ErrErrDuplicateDataM = "the data has duplicated"
 
+	ErrInvalidValueCode     = 40000
 	ErrEndpointNotFoundCode = 40404
 	ErrMethodNotAllowedCode = 40405
 	ErrReadRequestBodyCode  = 40406
@@ -127,4 +131,28 @@ func FromServerError(err error) *ServerError {
 			Error: err,
 		},
 	}
+}
+
+func ParseValidator(err error) []JSON {
+	var res []JSON
+
+	switch e := err.(type) {
+	case validator.ValidationErrors:
+		for _, ve := range e {
+			field := strings.ToLower(ve.Field())
+			res = append(res, JSON{
+				"code":    ErrInvalidValueCode,
+				"title":   field,
+				"message": fmt.Sprintf("Error field validation for '%s' failed on the '%s' tag", field, ve.Tag()),
+			})
+		}
+	default:
+		res = append(res, JSON{
+			"code":    ErrInvalidValueCode,
+			"title":   "Unknown",
+			"message": err.Error(),
+		})
+	}
+
+	return res
 }
