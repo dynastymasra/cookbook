@@ -14,6 +14,9 @@ const (
 	ErrPrimaryDatabase   = "the database connection is failed"
 	ErrErrDuplicateDataM = "the data has duplicated"
 
+	ErrDatabaseUnavailableCode  = 30000
+	ErrDatabaseDataNotFoundCode = 30001
+
 	ErrInvalidValueCode         = 40400
 	ErrUnauthorizedCode         = 40401
 	ErrPaymentRequiredCode      = 40402
@@ -41,8 +44,6 @@ const (
 	ErrPreconditionRequiredCode = 40428
 	ErrTooManyRequestsCode      = 40429
 	ErrHeaderTooLargeCode       = 40431
-
-	ErrDatabaseUnavailableCode = 50000
 
 	ErrInternalServiceCode       = 50500
 	ErrNotImplementedCode        = 50501
