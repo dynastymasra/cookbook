@@ -5,9 +5,11 @@ go 1.13
 require (
 	github.com/cheekybits/is v0.0.0-20150225183255-68e9c0620927 // indirect
 	github.com/go-playground/validator/v10 v10.4.0
+	github.com/golang-migrate/migrate/v4 v4.13.0
 	github.com/gorilla/mux v1.8.0
 	github.com/graphql-go/graphql v0.7.9
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
+	github.com/lib/pq v1.3.0
 	github.com/matryer/resync v0.0.0-20161211202428-d39c09a11215
 	github.com/newrelic/go-agent v3.9.0+incompatible
 	github.com/nyaruka/phonenumbers v1.0.57
