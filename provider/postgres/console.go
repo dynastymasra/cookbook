@@ -44,7 +44,12 @@ func CreateMigrationFiles(filename string) error {
 }
 
 func Migration(data *gorm.DB) (*migrate.Migrate, error) {
-	driver, err := postgres.WithInstance(data.DB(), &postgres.Config{})
+	db, err := data.DB()
+	if err != nil {
+		return nil, err
+	}
+
+	driver, err := postgres.WithInstance(db, &postgres.Config{})
 	if err != nil {
 		logrus.WithError(err).Errorln("Failed open instance")
 
