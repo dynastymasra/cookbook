@@ -10,12 +10,15 @@ import (
 )
 
 const (
-	ErrResourceNotExist  = "the requested resource doesn't exists"
-	ErrPrimaryDatabase   = "the database connection is failed"
-	ErrErrDuplicateDataM = "the data has duplicated"
+	ErrResourceNotExistM = "the requested resource doesn't exists"
+
+	ErrDatabaseUnavailableM   = "the database connection is failed"
+	ErrDatabaseDuplicateDataM = "the data has conflict with existing data"
+	ErrDatabaseDataNotFoundM  = "the data requested not found"
 
 	ErrDatabaseUnavailableCode  = 30000
 	ErrDatabaseDataNotFoundCode = 30001
+	ErrDatabaseDuplicateCode    = 30002
 
 	ErrInvalidValueCode         = 40400
 	ErrUnauthorizedCode         = 40401
@@ -26,7 +29,7 @@ const (
 	ErrReadRequestBodyCode      = 40406
 	ErrProxyAuthRequiredCode    = 40407
 	ErrRequestTimeoutCode       = 40408
-	ErrDuplicateDataCode        = 40409
+	ErrConflictCode             = 40409
 	ErrDataMissingCode          = 40410
 	ErrLengthRequiredCode       = 40411
 	ErrPreconditionCode         = 40412
@@ -65,28 +68,44 @@ var (
 	ErrEndpointNotFound = ErrorMessage{
 		Code:  ErrEndpointNotFoundCode,
 		Title: "Endpoint",
-		Error: errors.New(ErrResourceNotExist),
+		Error: errors.New(ErrResourceNotExistM),
 	}
 
 	// ErrMethodNotAllowed is a message error if http method is not allow to access the resource
 	ErrMethodNotAllowed = ErrorMessage{
 		Code:  ErrMethodNotAllowedCode,
 		Title: "Method",
-		Error: errors.New(ErrResourceNotExist),
+		Error: errors.New(ErrResourceNotExistM),
 	}
 
-	// ErrDatabaseConnectionFailed is a message to inform if database connection failed or refuse
-	ErrDatabaseConnectionFailed = ErrorMessage{
+	// ErrDatabaseUnavailable a message to inform if database connection failed or refuse
+	ErrDatabaseUnavailable = ErrorMessage{
 		Code:  ErrDatabaseUnavailableCode,
 		Title: "Database",
-		Error: errors.New(ErrPrimaryDatabase),
+		Error: errors.New(ErrDatabaseUnavailableM),
 	}
 
-	// ErrErrDuplicateData error message if the data inserted to database has duplicate
-	ErrErrDuplicateData = ErrorMessage{
-		Code:  ErrDuplicateDataCode,
+	// ErrDatabaseDataNotFound error message if data from database doesn't exist
+	ErrDatabaseDataNotFound = ErrorMessage{
+		Code:  ErrDatabaseDataNotFoundCode,
+		Title: "Not Found",
+		Error: errors.New(ErrDatabaseDataNotFoundM),
+	}
+
+	// ErrDatabaseDuplicate error message if the data inserted to database has duplicate
+	ErrDatabaseDuplicate = ErrorMessage{
+		Code:  ErrDatabaseDuplicateCode,
 		Title: "Duplicate",
-		Error: errors.New(ErrErrDuplicateDataM),
+		Error: errors.New(ErrDatabaseDuplicateDataM),
+	}
+
+	ErrorResult = map[int]ErrorMessage{
+		ErrEndpointNotFoundCode: ErrEndpointNotFound,
+		ErrMethodNotAllowedCode: ErrMethodNotAllowed,
+
+		ErrDatabaseUnavailableCode:  ErrDatabaseUnavailable,
+		ErrDatabaseDataNotFoundCode: ErrDatabaseDataNotFound,
+		ErrDatabaseDuplicateCode:    ErrDatabaseDuplicate,
 	}
 )
 
@@ -143,7 +162,7 @@ func HTTPToClientError(status int, title, body string) *ClientError {
 	case http.StatusRequestTimeout:
 		code = ErrRequestTimeoutCode
 	case http.StatusConflict:
-		code = ErrDuplicateDataCode
+		code = ErrConflictCode
 	case http.StatusGone:
 		code = ErrDataMissingCode
 	case http.StatusLengthRequired:
