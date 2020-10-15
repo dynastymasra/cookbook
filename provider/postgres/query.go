@@ -14,6 +14,7 @@ const (
 	LessThanEqual    = "LessThanEqual"
 	IN               = "IN"
 	JSON             = "JSON"
+	Like             = "Like"
 
 	Descending = "Descending"
 	Ascending  = "Ascending"
@@ -118,6 +119,9 @@ func TranslateQuery(db *gorm.DB, query *Query) *gorm.DB {
 		case IN:
 			q := fmt.Sprintf("%s IN (?)", filter.Field)
 			db = db.Where(q, filter.Value)
+		case Like:
+			q := fmt.Sprintf("%s LIKE ?", filter.Field)
+			db = db.Or(q, filter.Value)
 		default:
 			q := fmt.Sprintf("%s = ?", filter.Field)
 			db = db.Where(q, filter.Value)
