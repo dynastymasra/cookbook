@@ -11,19 +11,19 @@ import (
 )
 
 var (
-	mongoClient *mongo.Client
-	errMongo    error
-	runMongo    resync.Once
+	client *mongo.Client
+	err    error
+	once   resync.Once
 )
 
-// MongoDB struct to create new mongo db connection client
+// Config struct to create new mongo db connection client
 //
 // Address: the URI of mongo db (mongodb://localhost:27017)
 // Username: the username for authentication.
 // Password: the password for authentication.
 // Database: the name of the database to use for authentication.
 // MaxPoolSize: specifies that maximum number of connections allowed in the driver's connection pool to each server.
-type MongoDB struct {
+type Config struct {
 	Address     string
 	Username    string
 	Password    string
@@ -33,28 +33,28 @@ type MongoDB struct {
 
 // Client singleton of Mongo DB client connector, set MongoDB struct to call this method
 // library with go.mongodb.org/mongo-driver/mongo
-func (m MongoDB) Client() (*mongo.Client, error) {
+func (m Config) Client() (*mongo.Client, error) {
 	auth := options.Credential{
 		AuthSource: m.Database,
 		Username:   m.Username,
 		Password:   m.Password,
 	}
 
-	runMongo.Do(func() {
-		mongoClient, errMongo = mongo.Connect(context.Background(), options.Client().
+	once.Do(func() {
+		client, err = mongo.Connect(context.Background(), options.Client().
 			SetAuth(auth).
 			SetMaxPoolSize(uint64(m.MaxPoolSize)).
 			ApplyURI(m.Address))
 	})
 
-	if err := mongoClient.Ping(context.Background(), nil); err != nil {
+	if err := client.Ping(context.Background(), nil); err != nil {
 		return nil, err
 	}
 
-	return mongoClient, errMongo
+	return client, err
 }
 
 // Reset singleton mongo db connection client
-func (m MongoDB) Reset() {
-	runMongo.Reset()
+func (m Config) Reset() {
+	once.Reset()
 }

@@ -10,12 +10,12 @@ import (
 )
 
 var (
-	postgresDB  *gorm.DB
-	errPostgres error
-	runPostgres resync.Once
+	db   *gorm.DB
+	err  error
+	once resync.Once
 )
 
-// Postgres struct to create new postgres connection client
+// Config struct to create new postgres connection client
 //
 // Database: the postgres database name
 // Host: the postgres database host (localhost)
@@ -26,7 +26,7 @@ var (
 // MaxIdleConn: sets the maximum number of connections in the idle connection pool.
 // MaxOpenConn: sets the maximum number of open connections to the database.
 // LogMode: sets log mode, 1(Silent) - 2(Error) - 3(Warn) - 4(Info), default is Error
-type Postgres struct {
+type Config struct {
 	Database    string
 	Host        string
 	Port        int
@@ -40,7 +40,7 @@ type Postgres struct {
 
 // Client singleton of Postgres connection client, use Postgres struct to call this method
 // library with github.com/jinzhu/gorm
-func (p Postgres) Client() (*gorm.DB, error) {
+func (p Config) Client() (*gorm.DB, error) {
 	dsn := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%d %s",
 		p.Username, p.Password, p.Database, p.Host, p.Port, p.Params)
 
@@ -63,13 +63,13 @@ func (p Postgres) Client() (*gorm.DB, error) {
 		Logger: logger.Default.LogMode(logMode()),
 	}
 
-	runPostgres.Do(func() {
-		postgresDB, errPostgres = gorm.Open(postgres.Open(dsn), config)
-		if errPostgres != nil {
+	once.Do(func() {
+		db, err = gorm.Open(postgres.Open(dsn), config)
+		if err != nil {
 			return
 		}
 
-		sqlDB, errPostgres := postgresDB.DB()
+		sqlDB, errPostgres := db.DB()
 		if errPostgres != nil {
 			return
 		}
@@ -80,10 +80,10 @@ func (p Postgres) Client() (*gorm.DB, error) {
 		errPostgres = sqlDB.Ping()
 	})
 
-	return postgresDB, errPostgres
+	return db, err
 }
 
 // Reset singleton postgres connection client
-func (p Postgres) Reset() {
-	runPostgres.Reset()
+func (p Config) Reset() {
+	once.Reset()
 }
