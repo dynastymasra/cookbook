@@ -8,32 +8,53 @@ type JSend struct {
 	Message string      `json:"message,omitempty"`
 	Data    interface{} `json:"data,omitempty"`
 	Meta    *Meta       `json:"meta,omitempty"`
+	Link    *Links      `json:"links,omitempty"`
 	Code    interface{} `json:"code,omitempty"`
 }
 
 // Meta data used for JSON response
 type Meta struct {
-	Links *Links `json:"links,omitempty"`
+	Page *Page `json:"page,omitempty"`
+}
+
+// Page pagination information data
+type Page struct {
+	Current int `json:"current,omitempty"`
+	Size    int `json:"size,omitempty"`
+	Total   int `json:"total,omitempty"`
+}
+
+// NewPage of return data with total of data, size per page, and curretn page
+func NewPage(current, size, total int) *Page {
+	return &Page{
+		Current: current,
+		Size:    size,
+		Total:   total,
+	}
 }
 
 // Links for meta data JSON response
 type Links struct {
-	Next string `json:"next,omitempty"`
-	Prev string `json:"prev,omitempty"`
+	First string `json:"first,omitempty"`
+	Next  string `json:"next,omitempty"`
+	Prev  string `json:"prev,omitempty"`
+	Last  string `json:"last,omitempty"`
 }
 
 // NewMeta build new meta struct
-func NewMeta(links *Links) *Meta {
+func NewMeta(page *Page) *Meta {
 	return &Meta{
-		Links: links,
+		Page: page,
 	}
 }
 
 // NewLinks build new links struct
-func NewLinks(next, prev string) *Links {
+func NewLinks(next, prev, first, last string) *Links {
 	return &Links{
-		Next: next,
-		Prev: prev,
+		Next:  next,
+		Prev:  prev,
+		First: first,
+		Last:  last,
 	}
 }
 
@@ -53,8 +74,8 @@ func ErrorResponse(msg string, code interface{}) JSend {
 }
 
 // SuccessDataResponse used to return response JSON format if have data value
-func SuccessDataResponse(data interface{}, meta *Meta) JSend {
-	return JSend{Status: "success", Data: data, Meta: meta}
+func SuccessDataResponse(data interface{}, meta *Meta, links *Links) JSend {
+	return JSend{Status: "success", Data: data, Meta: meta, Link: links}
 }
 
 // Stringify make JSend struct to string

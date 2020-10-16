@@ -28,14 +28,13 @@ func (j *JSendSuite) Test_SuccessResponse() {
 func (j *JSendSuite) Test_FailResponse() {
 	resp := cookbook.FailResponse(&cookbook.JSON{
 		"key": "value",
-	}, "1234567890")
+	})
 
 	assert.EqualValues(j.T(), cookbook.JSend{
 		Status: "failed",
 		Data: &cookbook.JSON{
 			"key": "value",
 		},
-		Code: "1234567890",
 	}, resp)
 }
 
@@ -52,7 +51,7 @@ func (j *JSendSuite) Test_ErrorResponse() {
 func (j *JSendSuite) Test_SuccessDataResponse() {
 	resp := cookbook.SuccessDataResponse(&cookbook.JSON{
 		"test": "test",
-	}, cookbook.NewMeta(cookbook.NewLinks("next", "prev")))
+	}, cookbook.NewMeta(cookbook.NewPage(1, 25, 100)), cookbook.NewLinks("next", "prev", "first", "last"))
 
 	assert.EqualValues(j.T(), cookbook.JSend{
 		Status: "success",
@@ -60,10 +59,17 @@ func (j *JSendSuite) Test_SuccessDataResponse() {
 			"test": "test",
 		},
 		Meta: &cookbook.Meta{
-			Links: &cookbook.Links{
-				Next: "next",
-				Prev: "prev",
+			Page: &cookbook.Page{
+				Current: 1,
+				Size:    25,
+				Total:   100,
 			},
+		},
+		Link: &cookbook.Links{
+			First: "first",
+			Next:  "next",
+			Prev:  "prev",
+			Last:  "last",
 		},
 	}, resp)
 }
@@ -73,7 +79,7 @@ func (j *JSendSuite) Test_Stringify_Success() {
 
 	result := cookbook.SuccessDataResponse(&cookbook.JSON{
 		"test": "test",
-	}, nil).Stringify()
+	}, nil, nil).Stringify()
 
 	assert.JSONEq(j.T(), expected, result)
 }
@@ -84,7 +90,7 @@ func (j *JSendSuite) Test_Stringify_Failed_Marshal() {
 
 	result := cookbook.SuccessDataResponse(&cookbook.JSON{
 		"key": ch,
-	}, nil).Stringify()
+	}, nil, nil).Stringify()
 
 	assert.Equal(j.T(), expected, result)
 }
