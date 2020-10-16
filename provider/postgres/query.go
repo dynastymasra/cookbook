@@ -121,7 +121,7 @@ func TranslateQuery(db *gorm.DB, query *Query) *gorm.DB {
 			db = db.Where(q, filter.Value)
 		case Like:
 			q := fmt.Sprintf("%s LIKE ?", filter.Field)
-			db = db.Or(q, filter.Value)
+			db = db.Where(q, filter.Value)
 		default:
 			q := fmt.Sprintf("%s = ?", filter.Field)
 			db = db.Where(q, filter.Value)
