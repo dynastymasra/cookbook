@@ -1,4 +1,4 @@
-package cookbook
+package message
 
 import (
 	"errors"
@@ -6,121 +6,66 @@ import (
 	"net/http"
 	"strings"
 
+	"github.com/dynastymasra/cookbook"
+
 	"github.com/go-playground/validator/v10"
-)
-
-const (
-	ErrResourceNotExistM = "the requested resource doesn't exists"
-
-	ErrDatabaseUnavailableM   = "the database connection is failed"
-	ErrDatabaseDuplicateDataM = "the data has conflict with existing data"
-	ErrDatabaseDataNotFoundM  = "the data requested not found"
-
-	ErrDatabaseUnavailableCode  = 30000
-	ErrDatabaseDataNotFoundCode = 30001
-	ErrDatabaseDuplicateCode    = 30002
-
-	ErrInvalidValueCode         = 40400
-	ErrUnauthorizedCode         = 40401
-	ErrPaymentRequiredCode      = 40402
-	ErrForbiddenCode            = 40403
-	ErrEndpointNotFoundCode     = 40404
-	ErrMethodNotAllowedCode     = 40405
-	ErrReadRequestBodyCode      = 40406
-	ErrProxyAuthRequiredCode    = 40407
-	ErrRequestTimeoutCode       = 40408
-	ErrConflictCode             = 40409
-	ErrDataMissingCode          = 40410
-	ErrLengthRequiredCode       = 40411
-	ErrPreconditionCode         = 40412
-	ErrDataToLargeCode          = 40413
-	ErrURITooLongCode           = 40414
-	ErrUnsupportedMediaTypeCode = 40415
-	ErrRangeTooLongCode         = 40416
-	ErrExpectationCode          = 40417
-	ErrMisdirectedRequestCode   = 40421
-	ErrUnprocessableEntityCode  = 40422
-	ErrDataLockedCode           = 40423
-	ErrFailedDependencyCode     = 40424
-	ErrTooEarlyCode             = 40425
-	ErrUpgradeRequiredCode      = 40426
-	ErrPreconditionRequiredCode = 40428
-	ErrTooManyRequestsCode      = 40429
-	ErrHeaderTooLargeCode       = 40431
-
-	ErrInternalServiceCode       = 50500
-	ErrNotImplementedCode        = 50501
-	ErrBadGatewayCode            = 50502
-	ErrServiceUnavailableCode    = 50503
-	ErrGatewayCode               = 50504
-	ErrNotSupportedCode          = 50505
-	ErrVariantCode               = 50506
-	ErrInsufficientStorageCode   = 50507
-	ErrLoopCode                  = 50508
-	ErrNotExtendedCode           = 50510
-	ErrNetworkAuthenticationCode = 50511
-
-	ErrUnknownCode = 99999
-)
-
-var (
-	// ErrEndpointNotFound is a message error if endpoint url not found
-	ErrEndpointNotFound = ErrorMessage{
-		Code:  ErrEndpointNotFoundCode,
-		Title: "Endpoint",
-		Error: errors.New(ErrResourceNotExistM),
-	}
-
-	// ErrMethodNotAllowed is a message error if http method is not allow to access the resource
-	ErrMethodNotAllowed = ErrorMessage{
-		Code:  ErrMethodNotAllowedCode,
-		Title: "Method",
-		Error: errors.New(ErrResourceNotExistM),
-	}
-
-	// ErrDatabaseUnavailable a message to inform if database connection failed or refuse
-	ErrDatabaseUnavailable = ErrorMessage{
-		Code:  ErrDatabaseUnavailableCode,
-		Title: "Database",
-		Error: errors.New(ErrDatabaseUnavailableM),
-	}
-
-	// ErrDatabaseDataNotFound error message if data from database doesn't exist
-	ErrDatabaseDataNotFound = ErrorMessage{
-		Code:  ErrDatabaseDataNotFoundCode,
-		Title: "Not Found",
-		Error: errors.New(ErrDatabaseDataNotFoundM),
-	}
-
-	// ErrDatabaseDuplicate error message if the data inserted to database has duplicate
-	ErrDatabaseDuplicate = ErrorMessage{
-		Code:  ErrDatabaseDuplicateCode,
-		Title: "Duplicate",
-		Error: errors.New(ErrDatabaseDuplicateDataM),
-	}
-
-	ErrorResult = map[int]ErrorMessage{
-		ErrEndpointNotFoundCode: ErrEndpointNotFound,
-		ErrMethodNotAllowedCode: ErrMethodNotAllowed,
-
-		ErrDatabaseUnavailableCode:  ErrDatabaseUnavailable,
-		ErrDatabaseDataNotFoundCode: ErrDatabaseDataNotFound,
-		ErrDatabaseDuplicateCode:    ErrDatabaseDuplicate,
-	}
 )
 
 // ErrorMessage format with error code and title
 type ErrorMessage struct {
-	Code  int
-	Title string
-	Error error
+	Code  Code   `json:"code,omitempty"`
+	Title string `json:"title,omitempty"`
+	Error error  `json:"message,omitempty"`
 }
 
-func NewErrorMessage(code int, title string, err error) *ErrorMessage {
+// NewErrorMessage create new error message format
+func NewErrorMessage(code Code, title string, err error) *ErrorMessage {
 	return &ErrorMessage{
 		Code:  code,
 		Title: title,
 		Error: err,
+	}
+}
+
+func (e Code) ErrorMessage() *ErrorMessage {
+	switch e {
+	case ErrValueCannotEmptyOrNilCode:
+		return NewErrorMessage(ErrValueCannotEmptyOrNilCode, "empty or null", fmt.Errorf("%v", ErrValueCannotEmptyOrNilM))
+	case ErrValueNotValidUUIDCode:
+		return NewErrorMessage(ErrValueNotValidUUIDCode, "uuid", fmt.Errorf("%v", ErrValueNotValidUUIDM))
+	case ErrEndpointNotFoundCode:
+		return NewErrorMessage(ErrEndpointNotFoundCode, "not found", fmt.Errorf("%v", ErrEndpointNotFoundM))
+	case ErrMethodNotAllowedCode:
+		return NewErrorMessage(ErrMethodNotAllowedCode, "method", fmt.Errorf("%v", ErrMethodNotAllowedM))
+	case ErrDatabaseUnavailableCode:
+		return NewErrorMessage(ErrDatabaseUnavailableCode, "database", fmt.Errorf("%v", ErrDatabaseUnavailableM))
+	case ErrDatabaseDataNotFoundCode:
+		return NewErrorMessage(ErrDatabaseDataNotFoundCode, "not found", fmt.Errorf("%v", ErrDatabaseDataNotFoundM))
+	case ErrDatabaseDuplicateCode:
+		return NewErrorMessage(ErrDatabaseDuplicateCode, "conflict", fmt.Errorf("%v", ErrDatabaseDuplicateDataM))
+	default:
+		return NewErrorMessage(ErrUnknownCode, "unknown", fmt.Errorf("%v", ErrUnknownM))
+	}
+}
+
+func (e Code) HTTPErrorMessage() int {
+	switch e {
+	case ErrValueCannotEmptyOrNilCode:
+		return http.StatusBadRequest
+	case ErrValueNotValidUUIDCode:
+		return http.StatusBadRequest
+	case ErrEndpointNotFoundCode:
+		return http.StatusNotFound
+	case ErrMethodNotAllowedCode:
+		return http.StatusMethodNotAllowed
+	case ErrDatabaseUnavailableCode:
+		return http.StatusServiceUnavailable
+	case ErrDatabaseDataNotFoundCode:
+		return http.StatusNotFound
+	case ErrDatabaseDuplicateCode:
+		return http.StatusConflict
+	default:
+		return http.StatusNotImplemented
 	}
 }
 
@@ -141,7 +86,7 @@ func NewClientError(code int, msg ...ErrorMessage) *ClientError {
 }
 
 func HTTPToClientError(status int, title, body string) *ClientError {
-	var code int
+	var code Code
 	switch status {
 	case http.StatusBadRequest:
 		code = ErrInvalidValueCode
@@ -213,11 +158,11 @@ func HTTPToClientError(status int, title, body string) *ClientError {
 	}
 }
 
-func ErrorMessageToJSONList(msg []ErrorMessage) []JSON {
-	var res []JSON
+func ErrorMessageToJSONList(msg []ErrorMessage) []cookbook.JSON {
+	var res []cookbook.JSON
 
 	for _, v := range msg {
-		res = append(res, JSON{
+		res = append(res, cookbook.JSON{
 			"code":    v.Code,
 			"title":   v.Title,
 			"message": v.Error.Error(),
@@ -259,7 +204,7 @@ func FromServerError(err error) *ServerError {
 }
 
 func HTTPtoServerError(status int, title, body string) *ServerError {
-	var code int
+	var code Code
 	switch status {
 	case http.StatusInternalServerError:
 		code = ErrInternalServiceCode
@@ -297,21 +242,21 @@ func HTTPtoServerError(status int, title, body string) *ServerError {
 	}
 }
 
-func ParseValidator(err error) []JSON {
-	var res []JSON
+func ParseValidator(err error) []cookbook.JSON {
+	var res []cookbook.JSON
 
 	switch e := err.(type) {
 	case validator.ValidationErrors:
 		for _, ve := range e {
 			field := strings.ToLower(ve.Field())
-			res = append(res, JSON{
+			res = append(res, cookbook.JSON{
 				"code":    ErrInvalidValueCode,
 				"title":   field,
 				"message": fmt.Sprintf("Error field validation for '%s' failed on the '%s' tag", field, ve.Tag()),
 			})
 		}
 	default:
-		res = append(res, JSON{
+		res = append(res, cookbook.JSON{
 			"code":    ErrUnknownCode,
 			"title":   "Unknown",
 			"message": err.Error(),

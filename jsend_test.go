@@ -60,9 +60,9 @@ func (j *JSendSuite) Test_SuccessDataResponse() {
 		},
 		Meta: &cookbook.Meta{
 			Page: &cookbook.Page{
-				Current: 1,
-				Size:    25,
-				Total:   100,
+				Number: 1,
+				Size:   25,
+				Total:  100,
 			},
 		},
 		Link: &cookbook.Links{

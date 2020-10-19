@@ -19,17 +19,17 @@ type Meta struct {
 
 // Page pagination information data
 type Page struct {
-	Current int `json:"current,omitempty"`
-	Size    int `json:"size,omitempty"`
-	Total   int `json:"total,omitempty"`
+	Number int `json:"number,omitempty"`
+	Size   int `json:"size,omitempty"`
+	Total  int `json:"total,omitempty"`
 }
 
-// NewPage of return data with total of data, size per page, and curretn page
-func NewPage(current, size, total int) *Page {
+// NewPage of return data with total of data, size per page, and number page
+func NewPage(number, size, total int) *Page {
 	return &Page{
-		Current: current,
-		Size:    size,
-		Total:   total,
+		Number: number,
+		Size:   size,
+		Total:  total,
 	}
 }
 
