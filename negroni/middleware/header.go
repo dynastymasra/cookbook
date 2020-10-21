@@ -12,21 +12,14 @@ import (
 )
 
 // AcceptMediaTypeJSON is a middleware to check content-type and accept value in HTTP header is application/json
-// request is a params to get request id from context if X-Request-ID is empty
-func AcceptMediaTypeJSON(request string) negroni.HandlerFunc {
+func AcceptMediaTypeJSON() negroni.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
-		requestID := r.Header.Get(cookbook.XRequestID)
 		accept := r.Header.Get(cookbook.HAccept)
 		mediaType := r.Header.Get(cookbook.HContentType)
-
-		if len(requestID) < 1 {
-			requestID = fmt.Sprintf("%v", r.Context().Value(request))
-		}
 
 		if !strings.Contains(accept, cookbook.HJSONType) {
 			w.Header().Set(cookbook.HContentType, cookbook.HJSONType)
 			w.Header().Set(cookbook.HAccept, cookbook.HJSONType)
-			w.Header().Set(cookbook.XRequestID, requestID)
 
 			res := message.ErrRequestNotAcceptableCode.ErrorMessage()
 			w.WriteHeader(http.StatusNotAcceptable)
@@ -43,7 +36,6 @@ func AcceptMediaTypeJSON(request string) negroni.HandlerFunc {
 		if !strings.Contains(mediaType, cookbook.HJSONType) {
 			w.Header().Set(cookbook.HContentType, cookbook.HJSONType)
 			w.Header().Set(cookbook.HAccept, cookbook.HJSONType)
-			w.Header().Set(cookbook.XRequestID, requestID)
 
 			res := message.ErrUnsupportedMediaTypeCode.ErrorMessage()
 			w.WriteHeader(http.StatusUnsupportedMediaType)
