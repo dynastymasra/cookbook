@@ -12,6 +12,10 @@ const (
 	ErrEndpointNotFoundCode Code = 20404
 	// ErrMethodNotAllowedCode error code if http method not match
 	ErrMethodNotAllowedCode Code = 20405
+	// ErrRequestNotAcceptableCode error code if http header not acceptable
+	ErrRequestNotAcceptableCode Code = 20406
+	// ErrUnsupportedMediaTypeCode error code if http request unsupported media type
+	ErrUnsupportedMediaTypeCode Code = 20415
 
 	// ErrDatabaseUnavailableCode error code if database is unavailable
 	ErrDatabaseUnavailableCode Code = 30000
@@ -24,7 +28,6 @@ const (
 	ErrUnauthorizedCode         Code = 40401
 	ErrPaymentRequiredCode      Code = 40402
 	ErrForbiddenCode            Code = 40403
-	ErrReadRequestBodyCode      Code = 40406
 	ErrProxyAuthRequiredCode    Code = 40407
 	ErrRequestTimeoutCode       Code = 40408
 	ErrConflictCode             Code = 40409
@@ -33,7 +36,6 @@ const (
 	ErrPreconditionCode         Code = 40412
 	ErrDataToLargeCode          Code = 40413
 	ErrURITooLongCode           Code = 40414
-	ErrUnsupportedMediaTypeCode Code = 40415
 	ErrRangeTooLongCode         Code = 40416
 	ErrExpectationCode          Code = 40417
 	ErrMisdirectedRequestCode   Code = 40421

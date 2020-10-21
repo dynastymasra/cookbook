@@ -37,6 +37,10 @@ func (e Code) ErrorMessage() *ErrorMessage {
 		return NewErrorMessage(ErrEndpointNotFoundCode, "not found", fmt.Errorf("%v", ErrEndpointNotFoundM))
 	case ErrMethodNotAllowedCode:
 		return NewErrorMessage(ErrMethodNotAllowedCode, "method", fmt.Errorf("%v", ErrMethodNotAllowedM))
+	case ErrRequestNotAcceptableCode:
+		return NewErrorMessage(ErrRequestNotAcceptableCode, "request", fmt.Errorf("%v", ErrRequestNotAcceptableM))
+	case ErrUnsupportedMediaTypeCode:
+		return NewErrorMessage(ErrUnsupportedMediaTypeCode, "media type", fmt.Errorf("%v", ErrUnsupportedMediaTypeM))
 	case ErrDatabaseUnavailableCode:
 		return NewErrorMessage(ErrDatabaseUnavailableCode, "database", fmt.Errorf("%v", ErrDatabaseUnavailableM))
 	case ErrDatabaseDataNotFoundCode:
@@ -58,6 +62,10 @@ func (e Code) HTTPErrorMessage() int {
 		return http.StatusNotFound
 	case ErrMethodNotAllowedCode:
 		return http.StatusMethodNotAllowed
+	case ErrRequestNotAcceptableCode:
+		return http.StatusNotAcceptable
+	case ErrUnsupportedMediaTypeCode:
+		return http.StatusUnsupportedMediaType
 	case ErrDatabaseUnavailableCode:
 		return http.StatusServiceUnavailable
 	case ErrDatabaseDataNotFoundCode:
@@ -101,7 +109,7 @@ func HTTPToClientError(status int, title, body string) *ClientError {
 	case http.StatusMethodNotAllowed:
 		code = ErrMethodNotAllowedCode
 	case http.StatusNotAcceptable:
-		code = ErrReadRequestBodyCode
+		code = ErrRequestNotAcceptableCode
 	case http.StatusProxyAuthRequired:
 		code = ErrProxyAuthRequiredCode
 	case http.StatusRequestTimeout:

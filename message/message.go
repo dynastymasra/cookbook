@@ -12,6 +12,10 @@ const (
 	ErrEndpointNotFoundM Message = "the requested endpoint doesn't exists"
 	// ErrMethodNotAllowedCode error message if HTTP method not match
 	ErrMethodNotAllowedM Message = "the http method doesn't match with existing"
+	// ErrRequestNotAcceptableM error message if HTTP request header not acceptable
+	ErrRequestNotAcceptableM Message = "the http header not acceptable"
+	// ErrUnsupportedMediaTypeM error message if HTTP request header with unsupported media type
+	ErrUnsupportedMediaTypeM Message = "unsupported media type"
 
 	// ErrDatabaseUnavailableM
 	ErrDatabaseUnavailableM Message = "the database connection is failed or unavailable"
