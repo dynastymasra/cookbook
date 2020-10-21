@@ -12,6 +12,7 @@ import (
 )
 
 // AcceptMediaTypeJSON is a middleware to check content-type and accept value in HTTP header is application/json
+// request is a params to get request id from context if X-Request-ID is empty
 func AcceptMediaTypeJSON(request string) negroni.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request, next http.HandlerFunc) {
 		requestID := r.Header.Get(cookbook.XRequestID)
