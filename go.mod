@@ -6,6 +6,7 @@ require (
 	github.com/cheekybits/is v0.0.0-20150225183255-68e9c0620927 // indirect
 	github.com/elastic/go-elasticsearch/v7 v7.9.0
 	github.com/go-playground/validator/v10 v10.4.0
+	github.com/go-redis/redis/v8 v8.3.2
 	github.com/golang-migrate/migrate/v4 v4.13.0
 	github.com/gorilla/mux v1.8.0
 	github.com/graphql-go/graphql v0.7.9
