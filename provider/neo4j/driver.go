@@ -2,6 +2,7 @@ package neo4j
 
 import (
 	"fmt"
+	"time"
 
 	"github.com/matryer/resync"
 
@@ -17,20 +18,24 @@ var (
 // Config struct to create new neo4j connection client
 //
 // Address: the neo4j database name
+// Database: the neo4j database name
 // Username: the neo4j database username
 // Password: the neo4j database password
 // LogEnabled: sets true if enable database log.
 // VerifyHostname defines how the driver will establish trust with the neo4j instance
 // MaxConnPool: sets the maximum number of open connections to the database.
+// MaxConnectionLifetime: Maximum connection life time on pooled connections. Values less than or equal to 0 disables the lifetime check (in Minutes)
 // LogLevel: sets log mode, 1(Error) - 2(Warning) - 3(Info) - 4(Debug), default is Error
 type Config struct {
-	Address        string
-	Username       string
-	Password       string
-	VerifyHostname bool
-	MaxConnPool    int
-	LogEnabled     bool
-	LogLevel       int
+	Address               string
+	Database              string
+	Username              string
+	Password              string
+	VerifyHostname        bool
+	MaxConnPool           int
+	MaxConnectionLifetime int
+	LogEnabled            bool
+	LogLevel              int
 }
 
 // Driver create new neo4j connection driver
@@ -42,7 +47,7 @@ func (n Config) Driver() (neo4j.Driver, error) {
 		driver, err = neo4j.NewDriver(url, auth, func(config *neo4j.Config) {
 			config.MaxConnectionPoolSize = n.MaxConnPool
 			config.Encrypted = n.VerifyHostname
-			config.TrustStrategy = neo4j.TrustAny(n.VerifyHostname)
+			config.MaxConnectionLifetime = time.Duration(n.MaxConnectionLifetime) * time.Minute
 			if n.LogEnabled {
 				config.Log = neo4j.ConsoleLogger(neo4j.LogLevel(n.LogLevel))
 			}
