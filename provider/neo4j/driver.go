@@ -20,15 +20,17 @@ var (
 // Username: the neo4j database username
 // Password: the neo4j database password
 // LogEnabled: sets true if enable database log.
+// VerifyHostname defines how the driver will establish trust with the neo4j instance
 // MaxConnPool: sets the maximum number of open connections to the database.
 // LogLevel: sets log mode, 1(Error) - 2(Warning) - 3(Info) - 4(Debug), default is Error
 type Config struct {
-	Address     string
-	Username    string
-	Password    string
-	MaxConnPool int
-	LogEnabled  bool
-	LogLevel    int
+	Address        string
+	Username       string
+	Password       string
+	VerifyHostname bool
+	MaxConnPool    int
+	LogEnabled     bool
+	LogLevel       int
 }
 
 // Driver create new neo4j connection driver
@@ -39,6 +41,7 @@ func (n Config) Driver() (neo4j.Driver, error) {
 	once.Do(func() {
 		driver, err = neo4j.NewDriver(url, auth, func(config *neo4j.Config) {
 			config.MaxConnectionPoolSize = n.MaxConnPool
+			config.TrustStrategy = neo4j.TrustAny(false)
 			if n.LogEnabled {
 				config.Log = neo4j.ConsoleLogger(neo4j.LogLevel(n.LogLevel))
 			}
