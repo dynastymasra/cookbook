@@ -1,19 +1,18 @@
-package postgres
+package neo4j
 
 import (
 	"errors"
 	"fmt"
-	"log"
 	"os"
 	"time"
 
 	"github.com/dynastymasra/cookbook/provider"
 
+	j "github.com/neo4j/neo4j-go-driver/neo4j"
+
 	"github.com/golang-migrate/migrate/v4"
-	"github.com/golang-migrate/migrate/v4/database/postgres"
-	_ "github.com/golang-migrate/migrate/v4/source/file"
+	"github.com/golang-migrate/migrate/v4/database/neo4j"
 	"github.com/sirupsen/logrus"
-	"gorm.io/gorm"
 )
 
 const (
@@ -26,39 +25,39 @@ func CreateMigrationFiles(filename string) error {
 		return errors.New("migration filename is not provided")
 	}
 
-	timestamp := time.Now().Unix()
-	upMigrationFilePath := fmt.Sprintf("%s/%d_%s.up.sql", migrationFilePath, timestamp, filename)
-	downMigrationFilePath := fmt.Sprintf("%s/%d_%s.down.sql", migrationFilePath, timestamp, filename)
+	timeStamp := time.Now().Unix()
+	upMigrationFilePath := fmt.Sprintf("%s/%d_%s.up.cypher", migrationFilePath, timeStamp, filename)
+	downMigrationFilePath := fmt.Sprintf("%s/%d_%s.down.cypher", migrationFilePath, timeStamp, filename)
 
 	if err := provider.CreateFile(upMigrationFilePath); err != nil {
 		return err
 	}
-	log.Println("created", upMigrationFilePath)
+	logrus.Println("created", upMigrationFilePath)
 
 	if err := provider.CreateFile(downMigrationFilePath); err != nil {
 		os.Remove(upMigrationFilePath)
 		return err
 	}
 
-	log.Println("created", downMigrationFilePath)
+	logrus.Println("created", downMigrationFilePath)
 
 	return nil
 }
 
-func Migration(data *gorm.DB) (*migrate.Migrate, error) {
-	db, err := data.DB()
-	if err != nil {
-		return nil, err
+func Migration(client j.Driver) (*migrate.Migrate, error) {
+	config := &neo4j.Config{
+		MigrationsLabel: neo4j.DefaultMigrationsLabel,
+		MultiStatement:  true,
 	}
 
-	driver, err := postgres.WithInstance(db, &postgres.Config{})
+	driver, err := neo4j.WithInstance(client, config)
 	if err != nil {
 		logrus.WithError(err).Errorln("Failed open instance")
 
 		return nil, err
 	}
 
-	m, err := migrate.NewWithDatabaseInstance(migrationSourcePath, "postgres", driver)
+	m, err := migrate.NewWithDatabaseInstance(migrationSourcePath, "neo4j", driver)
 	if err != nil {
 		logrus.WithError(err).Errorln("Failed migration data")
 
