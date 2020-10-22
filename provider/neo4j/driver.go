@@ -41,7 +41,8 @@ func (n Config) Driver() (neo4j.Driver, error) {
 	once.Do(func() {
 		driver, err = neo4j.NewDriver(url, auth, func(config *neo4j.Config) {
 			config.MaxConnectionPoolSize = n.MaxConnPool
-			config.TrustStrategy = neo4j.TrustAny(false)
+			config.Encrypted = n.VerifyHostname
+			config.TrustStrategy = neo4j.TrustAny(n.VerifyHostname)
 			if n.LogEnabled {
 				config.Log = neo4j.ConsoleLogger(neo4j.LogLevel(n.LogLevel))
 			}
