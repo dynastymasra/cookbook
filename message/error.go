@@ -47,6 +47,8 @@ func (e Code) ErrorMessage() *ErrorMessage {
 		return NewErrorMessage(ErrDatabaseDataNotFoundCode, "not found", fmt.Errorf("%v", ErrDatabaseDataNotFoundM))
 	case ErrDatabaseDuplicateCode:
 		return NewErrorMessage(ErrDatabaseDuplicateCode, "conflict", fmt.Errorf("%v", ErrDatabaseDuplicateDataM))
+	case ErrDatabaseDataExpectationCode:
+		return NewErrorMessage(ErrDatabaseDataExpectationCode, "data", fmt.Errorf("%v", ErrDatabaseDataExpectationM))
 	default:
 		return NewErrorMessage(ErrUnknownCode, "unknown", fmt.Errorf("%v", ErrUnknownM))
 	}
@@ -72,6 +74,8 @@ func (e Code) HTTPErrorMessage() int {
 		return http.StatusNotFound
 	case ErrDatabaseDuplicateCode:
 		return http.StatusConflict
+	case ErrDatabaseDataExpectationCode:
+		return http.StatusPreconditionFailed
 	default:
 		return http.StatusNotImplemented
 	}
@@ -272,4 +276,24 @@ func ParseValidator(err error) []cookbook.JSON {
 	}
 
 	return res
+}
+
+// HTTPDataNotFound return new client error message
+func HTTPDataNotFound(title string, err error) *ClientError {
+	return NewClientError(http.StatusNotFound, *NewErrorMessage(ErrDatabaseDataNotFoundCode, title, err))
+}
+
+// HTTPDataDuplicate return new client error message
+func HTTPDataDuplicate(title string, err error) *ClientError {
+	return NewClientError(http.StatusConflict, *NewErrorMessage(ErrDatabaseDuplicateCode, title, err))
+}
+
+// HTTPDataExpectationFailed return new server error message
+func HTTPDataExpectationFailed(title string, err error) *ClientError {
+	return NewClientError(http.StatusPreconditionFailed, *NewErrorMessage(ErrDatabaseDataExpectationCode, title, err))
+}
+
+// HTTPDatabaseUnavailable return new server error message
+func HTTPDatabaseUnavailable(title string, err error) *ServerError {
+	return NewServerError(http.StatusServiceUnavailable, *NewErrorMessage(ErrDatabaseUnavailableCode, title, err))
 }

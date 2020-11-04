@@ -23,6 +23,8 @@ const (
 	ErrDatabaseDataNotFoundM Message = "the requested data not found"
 	// ErrDatabaseDuplicateDataM error message if data inserted by client or user is duplicate with existing data
 	ErrDatabaseDuplicateDataM Message = "the data has conflict with existing data"
+	// ErrDatabaseDataExpectationM error message if result data from database doesn't meet the expected result
+	ErrDatabaseDataExpectationM Message = "the data requested doesn't meet the expected result"
 
 	// ErrUnknownM message if error happen with unknown error code
 	ErrUnknownM Message = "unknown error occur. try again later"

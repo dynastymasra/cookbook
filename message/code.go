@@ -23,6 +23,8 @@ const (
 	ErrDatabaseDataNotFoundCode Code = 30001
 	// ErrDatabaseDuplicateCode error code if data inserted by user or client is duplicate with existing data
 	ErrDatabaseDuplicateCode Code = 30002
+	// ErrDatabaseDataExpectationCode error code if result data from database doesn't meet the expectation
+	ErrDatabaseDataExpectationCode Code = 30003
 
 	ErrInvalidValueCode         Code = 40400
 	ErrUnauthorizedCode         Code = 40401
