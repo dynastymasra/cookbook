@@ -9,6 +9,11 @@ import (
 	"github.com/neo4j/neo4j-go-driver/neo4j"
 )
 
+const (
+	ErrorRecordNotFound    = "result contains no records"
+	ErrorRecordMoreThanOne = "result contains more than one record"
+)
+
 var (
 	driver neo4j.Driver
 	err    error
