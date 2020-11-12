@@ -32,33 +32,42 @@ type Config struct {
 
 // Client generate new elasticsearch client connection
 func (e Config) Client() (*elasticsearch.Client, error) {
-	addresses := strings.Split(e.Address, ",")
-
-	config := elasticsearch.Config{
-		Addresses: addresses,
-		Username:  e.Username,
-		Password:  e.Password,
-		Transport: &http.Transport{
-			MaxConnsPerHost:     e.MaxConnPerHost,
-			MaxIdleConnsPerHost: e.MaxIdlePerHost,
-		},
-	}
-
 	once.Do(func() {
+		addresses := strings.Split(e.Address, ",")
+
+		config := elasticsearch.Config{
+			Addresses: addresses,
+			Username:  e.Username,
+			Password:  e.Password,
+			Transport: &http.Transport{
+				MaxConnsPerHost:     e.MaxConnPerHost,
+				MaxIdleConnsPerHost: e.MaxIdlePerHost,
+			},
+		}
+
 		client, errs = elasticsearch.NewClient(config)
 	})
 
+	if err := e.Ping(); err != nil {
+		return nil, err
+	}
+
+	return client, errs
+}
+
+// Ping check database connection status
+func (e Config) Ping() error {
 	res, err := client.Ping()
 	if err != nil {
-		return nil, err
+		return err
 	}
 	defer res.Body.Close()
 
 	if res.IsError() {
-		return nil, errors.New(res.String())
+		return errors.New(res.String())
 	}
 
-	return client, errs
+	return nil
 }
 
 // Reset elasticsearch client connection
