@@ -43,7 +43,16 @@ func (r Config) Client() (*redis.Client, error) {
 		err = client.Ping(context.Background()).Err()
 	})
 
+	if err := r.Ping(); err != nil {
+		return nil, err
+	}
+
 	return client, err
+}
+
+// Ping check database connection status
+func (r Config) Ping() error {
+	return client.Ping(context.Background()).Err()
 }
 
 // Reset reset redis client connection

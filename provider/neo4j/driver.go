@@ -40,10 +40,10 @@ type Config struct {
 
 // Driver create new neo4j connection driver
 func (n Config) Driver() (neo4j.Driver, error) {
-	url := fmt.Sprintf("%s", n.Address)
-	auth := neo4j.BasicAuth(n.Username, n.Password, "")
-
 	once.Do(func() {
+		url := fmt.Sprintf("%s", n.Address)
+		auth := neo4j.BasicAuth(n.Username, n.Password, "")
+
 		driver, err = neo4j.NewDriver(url, auth, func(config *neo4j.Config) {
 			config.MaxConnectionPoolSize = n.MaxConnPool
 			config.Encrypted = n.VerifyHostname
@@ -54,7 +54,16 @@ func (n Config) Driver() (neo4j.Driver, error) {
 		})
 	})
 
+	if err := n.Ping(); err != nil {
+		return nil, err
+	}
+
 	return driver, err
+}
+
+// Ping database to check connection status
+func (n Config) Ping() error {
+	return driver.VerifyConnectivity()
 }
 
 // Reset reset neo4j connection driver

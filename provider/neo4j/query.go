@@ -2,7 +2,6 @@ package neo4j
 
 const (
 	Equal = "Equal"
-	In    = "In"
 
 	Descending = "Descending"
 	Ascending  = "Ascending"
@@ -29,8 +28,15 @@ type (
 
 	Query struct {
 		Node      string
+		Outgoing  *Node
 		Limit     int
 		Offset    int
+		Filters   []*Filter
+		Orderings []*Ordering
+	}
+
+	Node struct {
+		Node      string
 		Filters   []*Filter
 		Orderings []*Ordering
 	}

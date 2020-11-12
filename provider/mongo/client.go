@@ -34,24 +34,29 @@ type Config struct {
 // Client singleton of Mongo DB client connector, set MongoDB struct to call this method
 // library with go.mongodb.org/mongo-driver/mongo
 func (m Config) Client() (*mongo.Client, error) {
-	auth := options.Credential{
-		AuthSource: m.Database,
-		Username:   m.Username,
-		Password:   m.Password,
-	}
-
 	once.Do(func() {
+		auth := options.Credential{
+			AuthSource: m.Database,
+			Username:   m.Username,
+			Password:   m.Password,
+		}
+
 		client, err = mongo.Connect(context.Background(), options.Client().
 			SetAuth(auth).
 			SetMaxPoolSize(uint64(m.MaxPoolSize)).
 			ApplyURI(m.Address))
 	})
 
-	if err := client.Ping(context.Background(), nil); err != nil {
+	if err := m.Ping(); err != nil {
 		return nil, err
 	}
 
 	return client, err
+}
+
+// Ping mongodb connection to check database status
+func (m Config) Ping() error {
+	return client.Ping(context.Background(), nil)
 }
 
 // Reset singleton mongo db connection client

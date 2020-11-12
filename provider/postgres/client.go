@@ -41,29 +41,29 @@ type Config struct {
 // Client singleton of Postgres connection client, use Postgres struct to call this method
 // library with github.com/jinzhu/gorm
 func (p Config) Client() (*gorm.DB, error) {
-	dsn := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%d %s",
-		p.Username, p.Password, p.Database, p.Host, p.Port, p.Params)
-
-	logMode := func() logger.LogLevel {
-		switch p.LogMode {
-		case 1:
-			return logger.Silent
-		case 2:
-			return logger.Error
-		case 3:
-			return logger.Warn
-		case 4:
-			return logger.Info
-		default:
-			return logger.Error
-		}
-	}
-
-	config := &gorm.Config{
-		Logger: logger.Default.LogMode(logMode()),
-	}
-
 	once.Do(func() {
+		dsn := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%d %s",
+			p.Username, p.Password, p.Database, p.Host, p.Port, p.Params)
+
+		logMode := func() logger.LogLevel {
+			switch p.LogMode {
+			case 1:
+				return logger.Silent
+			case 2:
+				return logger.Error
+			case 3:
+				return logger.Warn
+			case 4:
+				return logger.Info
+			default:
+				return logger.Error
+			}
+		}
+
+		config := &gorm.Config{
+			Logger: logger.Default.LogMode(logMode()),
+		}
+
 		db, err = gorm.Open(postgres.Open(dsn), config)
 		if err != nil {
 			return
@@ -80,7 +80,21 @@ func (p Config) Client() (*gorm.DB, error) {
 		errPostgres = sqlDB.Ping()
 	})
 
+	if err := p.Ping(); err != nil {
+		return nil, err
+	}
+
 	return db, err
+}
+
+// Ping check database connection
+func (p Config) Ping() error {
+	conn, err := db.DB()
+	if err != nil {
+		return err
+	}
+
+	return conn.Ping()
 }
 
 // Reset singleton postgres connection client
