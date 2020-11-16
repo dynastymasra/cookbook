@@ -11,6 +11,28 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+type InternalError struct {
+	Code string
+	Msg  error
+}
+
+func NewInternalError(err error) *InternalError {
+	return &InternalError{
+		Msg: err,
+	}
+}
+
+func (i *InternalError) Error() string {
+	return i.Msg.Error()
+}
+
+func IsInternalError(err error) bool {
+	if _, ok := err.(*InternalError); ok {
+		return true
+	}
+	return false
+}
+
 // ErrorMessage format with error code and title
 type ErrorMessage struct {
 	Code  Code   `json:"code,omitempty"`
@@ -198,13 +220,6 @@ func NewServerError(code int, msg ErrorMessage) *ServerError {
 		HTTPCode: code,
 		Message:  msg,
 	}
-}
-
-func IsServerError(err error) bool {
-	if _, ok := err.(*ServerError); ok {
-		return true
-	}
-	return false
 }
 
 func FromServerError(err error) *ServerError {
