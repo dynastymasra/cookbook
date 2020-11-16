@@ -19,6 +19,13 @@ func IsForeignNotFound(err error) bool {
 	return false
 }
 
+func IsInvalidInput(err error) bool {
+	if err, ok := err.(*pgconn.PgError); ok && err.Code == "22P02" {
+		return true
+	}
+	return false
+}
+
 func IsNotFound(err error) bool {
 	return err == gorm.ErrRecordNotFound
 }
