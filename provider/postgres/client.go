@@ -26,16 +26,18 @@ var (
 // MaxIdleConn: sets the maximum number of connections in the idle connection pool.
 // MaxOpenConn: sets the maximum number of open connections to the database.
 // LogMode: sets log mode, 1(Silent) - 2(Error) - 3(Warn) - 4(Info), default is Error
+// DebugEnabled: sets true if enabled debug mode, will show query on console
 type Config struct {
-	Database    string
-	Host        string
-	Port        int
-	Username    string
-	Password    string
-	Params      string
-	MaxIdleConn int
-	MaxOpenConn int
-	LogMode     int
+	Database     string
+	Host         string
+	Port         int
+	Username     string
+	Password     string
+	Params       string
+	MaxIdleConn  int
+	MaxOpenConn  int
+	LogMode      int
+	DebugEnabled bool
 }
 
 // Client singleton of Postgres connection client, use Postgres struct to call this method
@@ -67,6 +69,10 @@ func (p Config) Client() (*gorm.DB, error) {
 		db, err = gorm.Open(postgres.Open(dsn), config)
 		if err != nil {
 			return
+		}
+
+		if p.DebugEnabled {
+			db = db.Debug()
 		}
 
 		sqlDB, errPostgres := db.DB()
