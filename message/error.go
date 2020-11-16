@@ -11,6 +11,18 @@ import (
 	"github.com/go-playground/validator/v10"
 )
 
+type InternalError struct {
+	Err error
+}
+
+func NewInternalError(err error) *InternalError {
+	return &InternalError{Err: err}
+}
+
+func (i *InternalError) Error() string {
+	return i.Err.Error()
+}
+
 // ErrorMessage format with error code and title
 type ErrorMessage struct {
 	Code  Code   `json:"code,omitempty"`
