@@ -22,6 +22,8 @@ func IsForeignNotFound(err error) bool {
 func IsInvalidInput(err error) bool {
 	if err, ok := err.(*pgconn.PgError); ok && err.Code == "22P02" {
 		return true
+	} else if err.Code == "23502" {
+		return true
 	}
 	return false
 }
