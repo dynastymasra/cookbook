@@ -102,3 +102,24 @@ func ParsePtrGRPCTimeToTime(t *timestamppb.Timestamp) time.Time {
 
 	return ts
 }
+
+// ParseTimeToPtrTime parse time to pointer time, timezone UTC
+func ParseTimeToPtrTime(t time.Time) *time.Time {
+	now := time.Now().UTC()
+	if t.IsZero() {
+		return &now
+	}
+	return &t
+}
+
+// ParsePtrTimeToTime parse pointer time to time, timezone UTC
+func ParsePtrTimeToTime(t *time.Time) time.Time {
+	if t == nil {
+		return time.Now().UTC()
+	}
+
+	if t.IsZero() {
+		return time.Now().UTC()
+	}
+	return *t
+}

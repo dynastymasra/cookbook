@@ -201,3 +201,73 @@ func (p *ParseSuite) Test_ParsePtrGRPCTimeToTime() {
 	assert.Equal(p.T(), ts.Minute(), result.Minute())
 	assert.Equal(p.T(), ts.Second(), result.Second())
 }
+
+func (p *ParseSuite) Test_ParseTimeToPtrTime() {
+	ts := time.Now().UTC()
+
+	result := cookbook.ParseTimeToPtrTime(ts)
+
+	assert.NotNil(p.T(), result)
+	assert.Equal(p.T(), ts.Year(), result.Year())
+	assert.Equal(p.T(), ts.Month(), result.Month())
+	assert.Equal(p.T(), ts.Day(), result.Day())
+	assert.Equal(p.T(), ts.Hour(), result.Hour())
+	assert.Equal(p.T(), ts.Minute(), result.Minute())
+	assert.Equal(p.T(), ts.Second(), result.Second())
+}
+
+func (p *ParseSuite) Test_ParseTimeToPtrTime_Zero() {
+	ts := time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC)
+
+	result := cookbook.ParseTimeToPtrTime(ts)
+
+	t := time.Now().UTC()
+
+	assert.NotNil(p.T(), result)
+	assert.Equal(p.T(), t.Year(), result.Year())
+	assert.Equal(p.T(), t.Month(), result.Month())
+	assert.Equal(p.T(), t.Day(), result.Day())
+	assert.Equal(p.T(), t.Hour(), result.Hour())
+	assert.Equal(p.T(), t.Minute(), result.Minute())
+}
+
+func (p *ParseSuite) Test_ParsePtrTimeToTime() {
+	ts := time.Now().UTC()
+
+	result := cookbook.ParsePtrTimeToTime(&ts)
+
+	assert.Equal(p.T(), ts.Year(), result.Year())
+	assert.Equal(p.T(), ts.Month(), result.Month())
+	assert.Equal(p.T(), ts.Day(), result.Day())
+	assert.Equal(p.T(), ts.Hour(), result.Hour())
+	assert.Equal(p.T(), ts.Minute(), result.Minute())
+	assert.Equal(p.T(), ts.Second(), result.Second())
+}
+
+func (p *ParseSuite) Test_ParsePtrTimeToTime_Nil() {
+	ts := time.Now().UTC()
+
+	result := cookbook.ParsePtrTimeToTime(nil)
+
+	assert.Equal(p.T(), ts.Year(), result.Year())
+	assert.Equal(p.T(), ts.Month(), result.Month())
+	assert.Equal(p.T(), ts.Day(), result.Day())
+	assert.Equal(p.T(), ts.Hour(), result.Hour())
+	assert.Equal(p.T(), ts.Minute(), result.Minute())
+	assert.Equal(p.T(), ts.Second(), result.Second())
+}
+
+func (p *ParseSuite) Test_ParsePtrTimeToTime_Zero() {
+	ts := time.Date(1, 1, 1, 0, 0, 0, 0, time.UTC)
+
+	result := cookbook.ParsePtrTimeToTime(&ts)
+
+	t := time.Now().UTC()
+
+	assert.NotNil(p.T(), result)
+	assert.Equal(p.T(), t.Year(), result.Year())
+	assert.Equal(p.T(), t.Month(), result.Month())
+	assert.Equal(p.T(), t.Day(), result.Day())
+	assert.Equal(p.T(), t.Hour(), result.Hour())
+	assert.Equal(p.T(), t.Minute(), result.Minute())
+}
