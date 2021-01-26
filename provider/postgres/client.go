@@ -17,16 +17,18 @@ var (
 
 // Config struct to create new postgres connection client
 //
-// Database: the postgres database name
-// Host: the postgres database host (localhost)
-// Port: the postgres database port (5432)
-// Username: the postgres database username
-// Password: the postgres database password
-// Params: the postgres database params, use space to separate value (sslmode=disable TimeZone=Asia/Jakarta)
-// MaxIdleConn: sets the maximum number of connections in the idle connection pool.
-// MaxOpenConn: sets the maximum number of open connections to the database.
-// LogMode: sets log mode, 1(Silent) - 2(Error) - 3(Warn) - 4(Info), default is Error
-// DebugEnabled: sets true if enabled debug mode, will show query on console
+//{
+//	Database: the postgres database name
+//	Host: the postgres database host (localhost)
+//	Port: the postgres database port (5432)
+//	Username: the postgres database username
+//	Password: the postgres database password
+//	Params: the postgres database params, use space to separate value (sslmode=disable TimeZone=Asia/Jakarta)
+//	MaxIdleConn: sets the maximum number of connections in the idle connection pool.
+//	MaxOpenConn: sets the maximum number of open connections to the database.
+//	LogMode: sets log mode, 1(Silent) - 2(Error) - 3(Warn) - 4(Info), default is Error
+//	DebugEnabled: sets true if enabled debug mode, will show query on console
+//}
 type Config struct {
 	Database     string
 	Host         string

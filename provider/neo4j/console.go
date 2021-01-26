@@ -20,6 +20,7 @@ const (
 	migrationFilePath   = "./migration"
 )
 
+// CreateMigrationFiles for Neo4J and put in migration folder
 func CreateMigrationFiles(filename string) error {
 	if len(filename) == 0 {
 		return errors.New("migration filename is not provided")
@@ -44,6 +45,7 @@ func CreateMigrationFiles(filename string) error {
 	return nil
 }
 
+// Migration preparation for Neo4J
 func Migration(client j.Driver) (*migrate.Migrate, error) {
 	config := &neo4j.Config{
 		MigrationsLabel: neo4j.DefaultMigrationsLabel,

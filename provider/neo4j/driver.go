@@ -17,15 +17,17 @@ var (
 
 // Config struct to create new neo4j connection client
 //
-// Address: the neo4j database name
-// Database: the neo4j database name
-// Username: the neo4j database username
-// Password: the neo4j database password
-// LogEnabled: sets true if enable database log.
-// VerifyHostname defines how the driver will establish trust with the neo4j instance
-// MaxConnPool: sets the maximum number of open connections to the database.
-// MaxConnectionLifetime: Maximum connection life time on pooled connections. Values less than or equal to 0 disables the lifetime check (in Minutes)
-// LogLevel: sets log mode, 1(Error) - 2(Warning) - 3(Info) - 4(Debug), default is Error
+//{
+//	Address: the neo4j database name
+//	Database: the neo4j database name
+//	Username: the neo4j database username
+//	Password: the neo4j database password
+//	LogEnabled: sets true if enable database log.
+//	VerifyHostname defines how the driver will establish trust with the neo4j instance
+//	MaxConnPool: sets the maximum number of open connections to the database.
+//	MaxConnectionLifetime: Maximum connection life time on pooled connections. Values less than or equal to 0 disables the lifetime check (in Minutes)
+//	LogLevel: sets log mode, 1(Error) - 2(Warning) - 3(Info) - 4(Debug), default is Error
+//}
 type Config struct {
 	Address               string
 	Database              string

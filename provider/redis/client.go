@@ -16,11 +16,13 @@ var (
 
 // Config struct to create new redis connection client
 //
-// Address: the redis address
-// Password: the redis password
-// Database: redis database default value is 0
-// PoolSize: Maximum number of socket connections
-// MinIdleConn: Minimum number of idle connections which is useful when establishing
+//{
+//	Address: the redis address
+//	Password: the redis password
+//	Database: redis database default value is 0
+//	PoolSize: Maximum number of socket connections
+//	MinIdleConn: Minimum number of idle connections which is useful when establishing
+//}
 type Config struct {
 	Address     string
 	Password    string

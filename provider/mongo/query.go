@@ -7,6 +7,7 @@ import (
 	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
+// Query struct to prepare query in mongo
 type Query struct {
 	Limit     int
 	Offset    int
@@ -14,12 +15,14 @@ type Query struct {
 	Orderings []*Ordering
 }
 
+// Filter query for mongo
 type Filter struct {
 	Condition string
 	Field     string
 	Value     interface{}
 }
 
+// Ordering set ordering field
 type Ordering struct {
 	Field     string
 	Direction string
@@ -43,6 +46,7 @@ var (
 	}
 )
 
+// NewQuery for mongo
 func NewQuery(limit, offset int) *Query {
 	return &Query{
 		Limit:  limit,
@@ -50,6 +54,7 @@ func NewQuery(limit, offset int) *Query {
 	}
 }
 
+// NewOrdering query
 func NewOrdering(field, direction string) *Ordering {
 	d := direction
 
@@ -79,6 +84,7 @@ func (q *Query) Filter(property, condition string, value interface{}) *Query {
 	return q
 }
 
+// Slice result from mongo
 func (q *Query) Slice(offset, limit int) *Query {
 	q.Offset = offset
 	q.Limit = limit
@@ -86,13 +92,14 @@ func (q *Query) Slice(offset, limit int) *Query {
 	return q
 }
 
-// Order adds a sort order to the query
+// Ordering adds a sort order to the query
 func (q *Query) Ordering(property, direction string) *Query {
 	order := NewOrdering(property, direction)
 	q.Orderings = append(q.Orderings, order)
 	return q
 }
 
+// TranslateQuery struct to mongo bson
 func TranslateQuery(query *Query) (bson.D, *options.FindOptions) {
 	limit := int64(query.Limit)
 	skip := int64(query.Offset)

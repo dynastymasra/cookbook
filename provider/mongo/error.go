@@ -6,6 +6,7 @@ const (
 	ErrDuplicateCode = 11000
 )
 
+// IsDuplicate check error from mongo if error because duplicated record
 func IsDuplicate(err error) bool {
 	mErr, ok := err.(mongo.WriteException)
 	if !ok {
@@ -19,6 +20,7 @@ func IsDuplicate(err error) bool {
 	return false
 }
 
+// IsInvalidIndexValue check error from mongo if error because invalid index value
 func IsInvalidIndexValue(err error) bool {
 	return err == mongo.ErrInvalidIndexValue
 }

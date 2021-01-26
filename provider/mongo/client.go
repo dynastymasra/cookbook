@@ -18,11 +18,13 @@ var (
 
 // Config struct to create new mongo db connection client
 //
-// Address: the URI of mongo db (mongodb://localhost:27017)
-// Username: the username for authentication.
-// Password: the password for authentication.
-// Database: the name of the database to use for authentication.
-// MaxPoolSize: specifies that maximum number of connections allowed in the driver's connection pool to each server.
+//{
+//	Address: the URI of mongo db (mongodb://localhost:27017)
+//	Username: the username for authentication.
+//	Password: the password for authentication.
+//	Database: the name of the database to use for authentication.
+//	MaxPoolSize: specifies that maximum number of connections allowed in the driver's connection pool to each server.
+//}
 type Config struct {
 	Address     string
 	Username    string

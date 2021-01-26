@@ -27,17 +27,20 @@ var (
 	}
 )
 
+// Filter sql query
 type Filter struct {
 	Condition string
 	Field     string
 	Value     interface{}
 }
 
+// Ordering set ordering result
 type Ordering struct {
 	Field     string
 	Direction string
 }
 
+// Query preparation sql
 type Query struct {
 	Model     string
 	Limit     int
@@ -46,13 +49,14 @@ type Query struct {
 	Orderings []*Ordering
 }
 
+// NewQuery sql
 func NewQuery(model string) *Query {
 	return &Query{
 		Model: model,
 	}
 }
 
-// NewFilter creates a new property filter
+// NewFilter creates a new property Filter
 func NewFilter(field, condition string, value interface{}) *Filter {
 	return &Filter{
 		Field:     field,
@@ -61,6 +65,7 @@ func NewFilter(field, condition string, value interface{}) *Filter {
 	}
 }
 
+// NewOrdering create a new property Ordering
 func NewOrdering(field, direction string) *Ordering {
 	d := direction
 
@@ -81,13 +86,14 @@ func (q *Query) Filter(property, condition string, value interface{}) *Query {
 	return q
 }
 
-// Order adds a sort order to the query
+// Ordering adds a sort order to the query
 func (q *Query) Ordering(property, direction string) *Query {
 	order := NewOrdering(property, direction)
 	q.Orderings = append(q.Orderings, order)
 	return q
 }
 
+// Slice result from database
 func (q *Query) Slice(offset, limit int) *Query {
 	q.Offset = offset
 	q.Limit = limit
@@ -95,6 +101,7 @@ func (q *Query) Slice(offset, limit int) *Query {
 	return q
 }
 
+// TranslateQuery from struct to gorm.DB query
 func TranslateQuery(db *gorm.DB, query *Query) *gorm.DB {
 	for _, filter := range query.Filters {
 		switch filter.Condition {

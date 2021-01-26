@@ -21,6 +21,7 @@ const (
 	migrationFilePath   = "./migration"
 )
 
+// CreateMigrationFiles for postgres and put in migration folder
 func CreateMigrationFiles(filename string) error {
 	if len(filename) == 0 {
 		return errors.New("migration filename is not provided")
@@ -45,6 +46,7 @@ func CreateMigrationFiles(filename string) error {
 	return nil
 }
 
+// Migration preparation for postgres
 func Migration(data *gorm.DB) (*migrate.Migrate, error) {
 	db, err := data.DB()
 	if err != nil {

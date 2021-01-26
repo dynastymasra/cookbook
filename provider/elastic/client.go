@@ -17,11 +17,14 @@ var (
 
 // Config struct to create new elasticsearch connection client
 //
-// Address: the elasticsearch database name
-// Username: the elasticsearch database username
-// Password: the elasticsearch database password
-// MaxIdlePerHost: sets the maximum number of idle connections to the database.
-// MaxConnPerHost: sets the maximum number of open connections to the database.
+//{
+//	Address: the elasticsearch database name
+//	Username: the elasticsearch database username
+//	Password: the elasticsearch database password
+//	MaxIdlePerHost: sets the maximum number of idle connections to the database.
+//	MaxConnPerHost: sets the maximum number of open connections to the database.
+//}
+
 type Config struct {
 	Address        string
 	Username       string
