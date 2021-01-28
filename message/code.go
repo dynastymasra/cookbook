@@ -1,67 +1,66 @@
 package message
 
-type Code int
-
 const (
-	// ErrValueCannotEmptyOrNilCode error code if value send by client is empty or null
-	ErrValueCannotEmptyOrNilCode Code = 10000
-	// ErrValueNotValidUUIDCode error code if value send by client is not valid UUID
-	ErrValueNotValidUUIDCode Code = 10001
+	// Error code related with request value
+	// ErrValueCannotEmptyOrNil error  if value send by client is empty or null
+	ErrValueCannotEmptyOrNil = "10000"
+	// ErrValueNotValidUUID error  if value send by client is not valid UUID
+	ErrValueNotValidUUID = "10001"
 
-	// ErrEndpointNotFoundCode error code if endpoint is not found
-	ErrEndpointNotFoundCode Code = 20404
-	// ErrMethodNotAllowedCode error code if http method not match
-	ErrMethodNotAllowedCode Code = 20405
-	// ErrRequestNotAcceptableCode error code if http header not acceptable
-	ErrRequestNotAcceptableCode Code = 20406
-	// ErrUnsupportedMediaTypeCode error code if http request unsupported media type
-	ErrUnsupportedMediaTypeCode Code = 20415
+	// Error code related with database
+	// ErrDatabaseUnavailable error if database is unavailable
+	ErrDatabaseUnavailable = "30000"
+	// ErrDatabaseDataNotFound error if data requested by user or client not found
+	ErrDatabaseDataNotFound = "30001"
+	// ErrDatabaseDuplicate error if data inserted by user or client is duplicate with existing data
+	ErrDatabaseDuplicate = "30002"
+	// ErrDatabaseDataExpectation error if result data from database doesn't meet the expectation
+	ErrDatabaseDataExpectation = "30003"
 
-	// ErrDatabaseUnavailableCode error code if database is unavailable
-	ErrDatabaseUnavailableCode Code = 30000
-	// ErrDatabaseDataNotFoundCode error code if data requested by user or client not found
-	ErrDatabaseDataNotFoundCode Code = 30001
-	// ErrDatabaseDuplicateCode error code if data inserted by user or client is duplicate with existing data
-	ErrDatabaseDuplicateCode Code = 30002
-	// ErrDatabaseDataExpectationCode error code if result data from database doesn't meet the expectation
-	ErrDatabaseDataExpectationCode Code = 30003
+	// Error code related with HTTP request
+	ErrInvalidValue    = "40400"
+	ErrUnauthorized    = "40401"
+	ErrPaymentRequired = "40402"
+	ErrForbidden       = "40403"
+	// ErrEndpointNotFound error if endpoint is not found
+	ErrEndpointNotFound = "40404"
+	// ErrMethodNotAllowed error if http method not match
+	ErrMethodNotAllowed = "40405"
+	// ErrRequestNotAcceptable error if http header not acceptable
+	ErrRequestNotAcceptable = "40406"
+	ErrProxyAuthRequired    = "40407"
+	ErrRequestTimeout       = "40408"
+	ErrConflict             = "40409"
+	ErrDataMissing          = "40410"
+	ErrLengthRequired       = "40411"
+	ErrPrecondition         = "40412"
+	ErrDataToLarge          = "40413"
+	ErrURITooLong           = "40414"
+	// ErrUnsupportedMediaType error if http request unsupported media type
+	ErrUnsupportedMediaType  = "40415"
+	ErrRangeTooLong          = "40416"
+	ErrExpectation           = "40417"
+	ErrMisdirectedRequest    = "40421"
+	ErrUnprocessableEntity   = "40422"
+	ErrDataLocked            = "40423"
+	ErrFailedDependency      = "40424"
+	ErrTooEarly              = "40425"
+	ErrUpgradeRequired       = "40426"
+	ErrPreconditionRequired  = "40428"
+	ErrTooManyRequests       = "40429"
+	ErrHeaderTooLarge        = "40431"
+	ErrInternalService       = "40500"
+	ErrNotImplemented        = "40501"
+	ErrBadGateway            = "40502"
+	ErrServiceUnavailable    = "40503"
+	ErrGateway               = "40504"
+	ErrNotSupported          = "40505"
+	ErrVariant               = "40506"
+	ErrInsufficientStorage   = "40507"
+	ErrLoop                  = "40508"
+	ErrNotExtended           = "40510"
+	ErrNetworkAuthentication = "40511"
 
-	ErrInvalidValueCode         Code = 40400
-	ErrUnauthorizedCode         Code = 40401
-	ErrPaymentRequiredCode      Code = 40402
-	ErrForbiddenCode            Code = 40403
-	ErrProxyAuthRequiredCode    Code = 40407
-	ErrRequestTimeoutCode       Code = 40408
-	ErrConflictCode             Code = 40409
-	ErrDataMissingCode          Code = 40410
-	ErrLengthRequiredCode       Code = 40411
-	ErrPreconditionCode         Code = 40412
-	ErrDataToLargeCode          Code = 40413
-	ErrURITooLongCode           Code = 40414
-	ErrRangeTooLongCode         Code = 40416
-	ErrExpectationCode          Code = 40417
-	ErrMisdirectedRequestCode   Code = 40421
-	ErrUnprocessableEntityCode  Code = 40422
-	ErrDataLockedCode           Code = 40423
-	ErrFailedDependencyCode     Code = 40424
-	ErrTooEarlyCode             Code = 40425
-	ErrUpgradeRequiredCode      Code = 40426
-	ErrPreconditionRequiredCode Code = 40428
-	ErrTooManyRequestsCode      Code = 40429
-	ErrHeaderTooLargeCode       Code = 40431
-
-	ErrInternalServiceCode       Code = 50500
-	ErrNotImplementedCode        Code = 50501
-	ErrBadGatewayCode            Code = 50502
-	ErrServiceUnavailableCode    Code = 50503
-	ErrGatewayCode               Code = 50504
-	ErrNotSupportedCode          Code = 50505
-	ErrVariantCode               Code = 50506
-	ErrInsufficientStorageCode   Code = 50507
-	ErrLoopCode                  Code = 50508
-	ErrNotExtendedCode           Code = 50510
-	ErrNetworkAuthenticationCode Code = 50511
-
-	// ErrUnknownCode code if error happen with unknown mapping error code
-	ErrUnknownCode = 99999
+	// ErrUnknown if error happen with unknown mapping error
+	ErrUnknown = "99999"
 )
