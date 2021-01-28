@@ -17,34 +17,31 @@ func AcceptMediaTypeJSON() negroni.HandlerFunc {
 		accept := r.Header.Get(cookbook.HAccept)
 		mediaType := r.Header.Get(cookbook.HContentType)
 
-		var errs []message.ErrorMessage
+		var errs []message.FailedMessage
 		if !strings.Contains(mediaType, cookbook.HJSONType) {
-			w.Header().Set(cookbook.HContentType, cookbook.HJSONType)
-			w.Header().Set(cookbook.HAccept, cookbook.HJSONType)
-
-			msg := message.ErrUnsupportedMediaTypeCode.ErrorMessage()
-			errs = append(errs, message.ErrorMessage{
-				Code:  msg.Code,
-				Title: msg.Title,
-				Error: msg.Error,
+			msg := message.FailedUnsupportedMediaType()
+			errs = append(errs, message.FailedMessage{
+				Code:    msg.Code,
+				Title:   msg.Title,
+				Message: msg.Message,
 			})
 		}
 
 		if !strings.Contains(accept, cookbook.HJSONType) {
-			w.Header().Set(cookbook.HContentType, cookbook.HJSONType)
-			w.Header().Set(cookbook.HAccept, cookbook.HJSONType)
-
-			msg := message.ErrRequestNotAcceptableCode.ErrorMessage()
-			errs = append(errs, message.ErrorMessage{
-				Code:  msg.Code,
-				Title: msg.Title,
-				Error: msg.Error,
+			msg := message.FailedRequestNotAcceptable()
+			errs = append(errs, message.FailedMessage{
+				Code:    msg.Code,
+				Title:   msg.Title,
+				Message: msg.Message,
 			})
 		}
 
 		if len(errs) > 0 {
-			w.WriteHeader(errs[0].Code.HTTPErrorMessage())
-			fmt.Fprint(w, cookbook.FailResponse(message.ErrorMessageToJSONList(errs)).Stringify())
+			w.Header().Set(cookbook.HContentType, cookbook.HJSONTypeUTF8)
+			w.Header().Set(cookbook.HAccept, cookbook.HJSONType)
+
+			w.WriteHeader(message.HTTPStatusCode(errs[0].Code))
+			fmt.Fprint(w, cookbook.FailResponse(errs).Stringify())
 			return
 		}
 
