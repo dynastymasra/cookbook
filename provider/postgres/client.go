@@ -44,7 +44,7 @@ type Config struct {
 
 // Client singleton of Postgres connection client, use Postgres struct to call this method
 // library with github.com/jinzhu/gorm
-func (p Config) Client() (*gorm.DB, error) {
+func (p *Config) Client() (*gorm.DB, error) {
 	once.Do(func() {
 		dsn := fmt.Sprintf("user=%s password=%s dbname=%s host=%s port=%d %s",
 			p.Username, p.Password, p.Database, p.Host, p.Port, p.Params)
@@ -96,7 +96,7 @@ func (p Config) Client() (*gorm.DB, error) {
 }
 
 // Ping check database connection
-func (p Config) Ping() error {
+func (p *Config) Ping() error {
 	conn, err := db.DB()
 	if err != nil {
 		return err
@@ -105,7 +105,16 @@ func (p Config) Ping() error {
 	return conn.Ping()
 }
 
+// Close database connection
+func (p *Config) Close() error {
+	conn, err := db.DB()
+	if err != nil {
+		return err
+	}
+	return conn.Close()
+}
+
 // Reset singleton postgres connection client
-func (p Config) Reset() {
+func (p *Config) Reset() {
 	once.Reset()
 }
