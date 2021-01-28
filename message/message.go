@@ -27,6 +27,8 @@ const (
 	// ErrDatabaseDataExpectationM error  if result data from database doesn't meet the expected result
 	ErrDatabaseDataExpectationM = "the data requested doesn't meet the expected result"
 
+	// ErrInternalServerM error message if internal server error or panic cannot handle request
+	ErrInternalServerM = "server failed process the request because internal issue, server will recover soon"
 	// ErrUnknownM  if error happen with unknown error code
 	ErrUnknownM = "unknown error occur. try again later"
 )
