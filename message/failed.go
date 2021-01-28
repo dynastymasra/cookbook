@@ -24,3 +24,21 @@ func FailedRequestNotAcceptable() FailedMessage {
 		Code:    ErrRequestNotAcceptable,
 	}
 }
+
+// FailedEndpointNotFound is failed message if client request to endpoint not exist
+func FailedEndpointNotFound() FailedMessage {
+	return FailedMessage{
+		Title:   "NOT_FOUND",
+		Message: ErrEndpointNotFoundM,
+		Code:    ErrEndpointNotFound,
+	}
+}
+
+// FailedMethodNotAllowed is failed message if client request with not allowed method
+func FailedMethodNotAllowed() FailedMessage {
+	return FailedMessage{
+		Title:   "METHOD_NOT_ALLOWED",
+		Message: ErrMethodNotAllowedM,
+		Code:    ErrMethodNotAllowed,
+	}
+}
