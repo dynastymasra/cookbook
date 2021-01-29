@@ -16,6 +16,10 @@ const (
 	ErrRequestNotAcceptableM = "the http header not acceptable"
 	// ErrUnsupportedMediaTypeM error  if HTTP request header with unsupported media type
 	ErrUnsupportedMediaTypeM = "unsupported media type"
+	// ErrUnauthorizedM error if client unauthenticated
+	ErrUnauthorizedM = "unauthenticated, check your credentials"
+	// ErrForbiddenM error if the client does not have access rights to the content
+	ErrForbiddenM = "does not have access rights to the content"
 
 	// Error message related with database
 	// ErrDatabaseUnavailableM

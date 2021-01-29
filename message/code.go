@@ -18,10 +18,12 @@ const (
 	ErrDatabaseDataExpectation = "30003"
 
 	// Error code related with HTTP request
-	ErrInvalidValue    = "40400"
+	ErrInvalidValue = "40400"
+	// ErrUnauthorized error if client unauthenticated
 	ErrUnauthorized    = "40401"
 	ErrPaymentRequired = "40402"
-	ErrForbidden       = "40403"
+	// ErrForbidden error if the client does not have access rights to the content
+	ErrForbidden = "40403"
 	// ErrEndpointNotFound error if endpoint is not found
 	ErrEndpointNotFound = "40404"
 	// ErrMethodNotAllowed error if http method not match

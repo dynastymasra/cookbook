@@ -42,3 +42,21 @@ func FailedMethodNotAllowed() FailedMessage {
 		Code:    ErrMethodNotAllowed,
 	}
 }
+
+// FailedUnauthorized is failed message if client is unauthenticated
+func FailedUnauthorized() FailedMessage {
+	return FailedMessage{
+		Title:   "UNAUTHORIZED",
+		Message: ErrUnauthorizedM,
+		Code:    ErrUnauthorized,
+	}
+}
+
+// FailedForbidden is failed message if the client does not have access rights to the content
+func FailedForbidden() FailedMessage {
+	return FailedMessage{
+		Title:   "FORBIDDEN",
+		Message: ErrForbiddenM,
+		Code:    ErrForbidden,
+	}
+}
