@@ -1,6 +1,7 @@
 package postgres
 
 import (
+	"database/sql"
 	"fmt"
 
 	"github.com/matryer/resync"
@@ -117,4 +118,10 @@ func (p *Config) Close() error {
 // Reset singleton postgres connection client
 func (p *Config) Reset() {
 	once.Reset()
+}
+
+// SetDB with existing connection
+func (p *Config) SetDB(sqlDB *sql.DB) error {
+	db, err = gorm.Open(postgres.New(postgres.Config{Conn: sqlDB}), &gorm.Config{})
+	return err
 }
