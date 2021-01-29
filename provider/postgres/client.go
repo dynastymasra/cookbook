@@ -1,7 +1,6 @@
 package postgres
 
 import (
-	"database/sql"
 	"fmt"
 
 	"github.com/matryer/resync"
@@ -121,7 +120,6 @@ func (p *Config) Reset() {
 }
 
 // SetDB with existing connection
-func (p *Config) SetDB(sqlDB *sql.DB) error {
-	db, err = gorm.Open(postgres.New(postgres.Config{Conn: sqlDB}), &gorm.Config{})
-	return err
+func (p *Config) SetDB(conn *gorm.DB) {
+	db = conn
 }
