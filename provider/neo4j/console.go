@@ -8,7 +8,7 @@ import (
 
 	"github.com/dynastymasra/cookbook/provider"
 
-	j "github.com/neo4j/neo4j-go-driver/neo4j"
+	j "github.com/neo4j/neo4j-go-driver/v4/neo4j"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/neo4j"

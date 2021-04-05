@@ -6,7 +6,7 @@ import (
 
 	"github.com/matryer/resync"
 
-	"github.com/neo4j/neo4j-go-driver/neo4j"
+	"github.com/neo4j/neo4j-go-driver/v4/neo4j"
 )
 
 var (
@@ -48,7 +48,6 @@ func (n Config) Driver() (neo4j.Driver, error) {
 
 		driver, err = neo4j.NewDriver(url, auth, func(config *neo4j.Config) {
 			config.MaxConnectionPoolSize = n.MaxConnPool
-			config.Encrypted = n.VerifyHostname
 			config.MaxConnectionLifetime = time.Duration(n.MaxConnectionLifetime) * time.Minute
 			if n.LogEnabled {
 				config.Log = neo4j.ConsoleLogger(neo4j.LogLevel(n.LogLevel))
