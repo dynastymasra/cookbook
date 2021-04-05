@@ -12,7 +12,6 @@ require (
 	github.com/grpc-ecosystem/go-grpc-middleware v1.2.2
 	github.com/jackc/pgconn v1.8.0
 	github.com/matryer/resync v0.0.0-20161211202428-d39c09a11215
-	github.com/neo4j/neo4j-go-driver/v4 v4.2.4
 	github.com/newrelic/go-agent v3.10.0+incompatible
 	github.com/nyaruka/phonenumbers v1.0.67
 	github.com/oklog/ulid/v2 v2.0.2
